@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engagement — Da teoria à prática. Do estudante ao engenheiro.</title>
+<meta name="theme-color" content="#142B45">
+<style>
+:root{
+  --navy:#142B45; --navy2:#1d4568; --blue:#7655D9; --blue2:#ece7fb; --orange:#F28C38;
+  --bg:#f3f4fa; --card:#ffffff; --text:#202631; --muted:#5b6b8c; --line:#e1e7f3;
+  --ok:#17a673; --warn:#e8a317; --bad:#e0475b; --radius:16px;
+  --shadow:0 6px 24px rgba(20,43,69,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+h1,h2,h3,h4{line-height:1.2;color:var(--navy)}
+svg{display:block}
+
+/* ===== Layout ===== */
+.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:linear-gradient(180deg,var(--navy),#0f2036);color:#fff;padding:22px 16px;display:none;flex-direction:column;gap:6px;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 16px;cursor:pointer}
+.brand b{font-size:1.35rem;letter-spacing:.3px;color:#fff}
+.brand small{display:block;font-size:.66rem;opacity:.7;line-height:1.25;margin-top:2px;font-weight:400}
+.navbtn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;color:#c9d6f5;font-weight:600;font-size:.95rem;text-align:left;width:100%;transition:.15s}
+.navbtn:hover{background:rgba(255,255,255,.08);color:#fff}
+.navbtn.active{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(118,85,217,.45)}
+.navbtn svg{width:20px;height:20px;flex:none}
+.sidefoot{margin-top:auto;font-size:.72rem;color:#8fa3d1;padding:10px 8px;border-top:1px solid rgba(255,255,255,.1)}
+.tag-proto{display:inline-block;background:var(--orange);color:#1b1100;font-weight:700;font-size:.62rem;padding:2px 8px;border-radius:99px;margin-bottom:6px}
+
+.topbar{position:sticky;top:0;z-index:15;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 16px}
+.topbar .brand{padding:0}
+.topbar .brand b{font-size:1.15rem}
+.topbar .brand small{display:none}
+
+.bottomnav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 18px rgba(20,43,69,.08)}
+.bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 7px;font-size:.62rem;color:var(--muted);font-weight:600}
+.bottomnav button svg{width:22px;height:22px}
+.bottomnav button.active{color:var(--blue)}
+.bottomnav button.active svg{color:var(--orange)}
+
+main{padding:18px 16px 96px;max-width:1100px;margin:0 auto}
+@media(min-width:900px){
+  .sidebar{display:flex}
+  .topbar,.bottomnav{display:none}
+  main{margin-left:250px;padding:34px 40px 60px;max-width:none}
+  #app{max-width:1100px;margin:0 auto}
+}
+
+/* ===== Componentes ===== */
+.view{animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pagehead{margin-bottom:20px}
+.pagehead h2{font-size:1.6rem}
+.pagehead p{color:var(--muted);margin-top:4px}
+.backbtn{display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-weight:700;margin-bottom:12px;padding:6px 12px 6px 6px;border-radius:99px}
+.backbtn:hover{background:var(--blue2)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.card h3{font-size:1.1rem;margin-bottom:6px}
+.card p{color:var(--muted);font-size:.93rem}
+.sec{margin:30px 0 14px;display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap}
+.sec h3{font-size:1.2rem}
+.sec a{color:var(--blue);font-weight:700;font-size:.9rem;cursor:pointer}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:12px;font-weight:700;font-size:.93rem;transition:.15s}
+.btn.primary{background:var(--blue);color:#fff;box-shadow:0 4px 14px rgba(118,85,217,.3)}
+.btn.primary:hover{background:#6845cf;transform:translateY(-1px)}
+.btn.orange{background:var(--orange);color:#1b1100}
+.btn.orange:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.btn.ghost{background:var(--blue2);color:var(--blue)}
+.btn.ghost:hover{background:#ddd3f8}
+.btn.line{border:2px solid var(--line);color:var(--navy)}
+.btn.line:hover{border-color:var(--blue)}
+.btn.sm{padding:8px 14px;font-size:.85rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+.chip{display:inline-block;padding:4px 11px;border-radius:99px;background:var(--blue2);color:var(--blue);font-size:.76rem;font-weight:700}
+.chip.o{background:#fff1e1;color:#b45a00}
+.chip.g{background:#e2f6ee;color:#0f7a54}
+.bar{height:9px;background:#e6ecf8;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#a28af0);border-radius:99px;transition:width .6s ease}
+.bar.o i{background:linear-gradient(90deg,var(--orange),#ffb066)}
+.bar.g i{background:linear-gradient(90deg,var(--ok),#4fd1a1)}
+.bar.r i{background:linear-gradient(90deg,var(--bad),#f08a98)}
+.barlabel{display:flex;justify-content:space-between;font-size:.82rem;font-weight:600;margin-bottom:5px}
+
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 55%,var(--blue) 140%);color:#fff;border-radius:22px;padding:28px;position:relative;overflow:hidden}
+.hero h2{color:#fff;font-size:1.7rem}
+.hero p{color:#d5dbe8;margin-top:8px;max-width:560px}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(242,140,56,.45),transparent 70%)}
+.hero .btn{margin-top:16px;position:relative;z-index:1}
+.hero .eyebrow{font-size:.78rem;letter-spacing:1.5px;text-transform:uppercase;color:#ffb066;font-weight:700;margin-bottom:6px}
+
+.ring{--p:0;width:96px;height:96px;border-radius:50%;background:conic-gradient(var(--orange) calc(var(--p)*1%),#e3e9f5 0);display:grid;place-items:center;flex:none}
+.ring span{width:74px;height:74px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;color:var(--navy);font-size:1.15rem}
+.stat{text-align:center}
+.stat b{display:block;font-size:1.6rem;color:var(--navy)}
+.stat span{font-size:.8rem;color:var(--muted)}
+
+.course .ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:1.4rem;margin-bottom:12px;background:var(--blue2)}
+.course .meta{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin:12px 0 6px;font-weight:600}
+.course .btn{margin-top:14px;width:100%}
+
+.lesson-body h4{margin:18px 0 8px;font-size:1.05rem}
+.lesson-body ul{margin:6px 0 6px 20px;color:#34456a}
+.lesson-body li{margin-bottom:5px}
+.formula{background:var(--navy);color:#fff;font-family:Consolas,monospace;padding:12px 16px;border-radius:12px;margin:10px 0;font-size:.95rem;overflow-x:auto}
+.callout{background:#fff7ec;border-left:4px solid var(--orange);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0;color:#5a3500;font-size:.92rem}
+.q{border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;background:#fbfcff}
+.q p{font-weight:700;color:var(--navy);margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;padding:10px 14px;border:2px solid var(--line);border-radius:11px;margin-bottom:8px;background:#fff;font-size:.92rem;transition:.15s}
+.opt:hover:not([disabled]){border-color:var(--blue);background:var(--blue2)}
+.opt.right{border-color:var(--ok);background:#e6f8f0}
+.opt.wrong{border-color:var(--bad);background:#fdecef}
+.fb{font-size:.88rem;margin-top:6px;padding:10px 12px;border-radius:10px;background:#eef3fd;color:#26385f}
+
+.mentor .av{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;font-size:1.2rem;margin-bottom:12px;background:linear-gradient(135deg,var(--blue),var(--navy))}
+.mentor .area{color:var(--blue);font-weight:700;font-size:.85rem}
+.mentor .btn{margin-top:14px;width:100%}
+
+/* ===== Simulador ===== */
+.sim-hero{background:linear-gradient(135deg,#0f2036,#1d4568);color:#fff;border-radius:20px;padding:24px;position:relative;overflow:hidden}
+.sim-hero h2{color:#fff}
+.sim-hero p{color:#cfdcf9;margin-top:8px}
+.sim-hero .alert{display:inline-flex;gap:8px;align-items:center;background:rgba(242,140,56,.18);color:#ffc58a;border:1px solid rgba(242,140,56,.5);padding:5px 12px;border-radius:99px;font-size:.8rem;font-weight:700;margin-bottom:10px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:16px}
+.fact{background:rgba(255,255,255,.08);border-radius:12px;padding:10px 12px}
+.fact b{display:block;font-size:1.25rem;color:#fff}
+.fact span{font-size:.75rem;color:#b9c9ee}
+.char{cursor:pointer;text-align:left;transition:.18s;border:2px solid var(--line);position:relative}
+.char:hover{border-color:var(--blue);transform:translateY(-2px)}
+.char.sel{border-color:var(--blue);background:#f5f9ff}
+.char.heard::after{content:"✔ ouvido";position:absolute;top:12px;right:12px;font-size:.68rem;background:#e2f6ee;color:#0f7a54;font-weight:700;padding:2px 8px;border-radius:99px}
+.char .av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:1.5rem;margin-bottom:10px}
+.char h4{font-size:1rem}
+.char small{color:var(--muted);font-weight:600}
+.dialog{margin-top:16px;border-radius:18px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+.dialog .says{padding:20px 22px;font-size:1.02rem;background:var(--blue2);color:#14306a;position:relative}
+.dialog .says::before{content:"“";font-size:3rem;color:var(--blue);opacity:.35;position:absolute;left:8px;top:-4px}
+.dialog .says p{padding-left:16px}
+.dialog .under{padding:16px 22px;font-size:.92rem;color:#34456a}
+.dialog .under b{color:var(--orange)}
+.step{display:flex;align-items:center;gap:10px;margin:28px 0 12px}
+.step i{font-style:normal;width:30px;height:30px;border-radius:50%;background:var(--orange);color:#1b1100;font-weight:800;display:grid;place-items:center;flex:none}
+.step h3{font-size:1.15rem}
+.alt{cursor:pointer;border:2px solid var(--line);transition:.18s;display:flex;flex-direction:column;gap:8px}
+.alt:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 10px 28px rgba(118,85,217,.15)}
+.alt .letter{width:34px;height:34px;border-radius:10px;background:var(--navy);color:#fff;font-weight:800;display:grid;place-items:center}
+.alt ul{margin-left:18px;color:#34456a;font-size:.88rem}
+.hint{background:#fff7ec;border:1px dashed var(--orange);color:#7a4300;border-radius:12px;padding:10px 14px;font-size:.88rem;margin-top:12px}
+.score-card{display:flex;gap:16px;align-items:center}
+.score-card .ring{width:84px;height:84px}
+.score-card .ring span{width:64px;height:64px;font-size:1rem}
+.lvl{font-size:.78rem;font-weight:800;padding:3px 10px;border-radius:99px}
+.lvl.a{background:#e2f6ee;color:#0f7a54}.lvl.b{background:#ece7fb;color:#5a3fc0}.lvl.c{background:#fff1d6;color:#8a5a00}.lvl.d{background:#fdecef;color:#b02a3f}
+.fbk{border-left:4px solid var(--blue);padding-left:14px;margin-top:10px;font-size:.9rem}
+.fbk p{margin:6px 0;color:#34456a}
+.fbk .pos::before{content:"✔ ";color:var(--ok);font-weight:800}
+.fbk .imp::before{content:"➜ ";color:var(--orange);font-weight:800}
+
+/* ===== Modal / toast ===== */
+.overlay{position:fixed;inset:0;background:rgba(7,16,42,.6);z-index:50;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.overlay.open{display:flex}
+.modal{background:#fff;width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:24px;animation:up .28s ease;position:relative}
+@media(min-width:700px){.overlay{align-items:center;padding:20px}.modal{border-radius:22px}}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.modal .x{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;background:var(--bg);font-size:1.1rem;color:var(--navy);font-weight:700}
+.modal h3{font-size:1.35rem;margin-bottom:4px;padding-right:36px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:2px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer;font-size:.92rem}
+.check.on{border-color:var(--ok);background:#e9f9f2}
+.check .bx{width:20px;height:20px;border-radius:6px;border:2px solid #b7c3de;flex:none;display:grid;place-items:center;font-size:.8rem;color:#fff;margin-top:1px}
+.check.on .bx{background:var(--ok);border-color:var(--ok)}
+.field{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.field label{font-size:.8rem;font-weight:700;color:var(--muted);display:block;margin-bottom:4px}
+.field input{padding:9px 12px;border:2px solid var(--line);border-radius:10px;font:inherit;width:140px}
+.field input:focus{outline:none;border-color:var(--blue)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,30px);background:var(--navy);color:#fff;padding:12px 20px;border-radius:99px;font-weight:600;font-size:.9rem;opacity:0;pointer-events:none;transition:.3s;z-index:60;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:900px){.toast{bottom:36px}}
+
+.cert{background:linear-gradient(135deg,#fff,#f1f6ff);border:2px solid var(--blue2);position:relative}
+.cert::before{content:"🎓";position:absolute;right:16px;top:12px;font-size:1.6rem}
+.cert.locked{opacity:.55;filter:grayscale(.7)}
+.foot{margin-top:40px;text-align:center;color:var(--muted);font-size:.78rem}
+
+/* ===== v2: plataforma de prevenção à evasão ===== */
+.btn svg{width:20px;height:20px;flex:none}
+.hero .row .btn{margin-top:0}
+.sidebar{overflow-y:auto}
+.sidebar .navbtn{padding:10px 14px}
+.navlabel{font-size:.66rem;letter-spacing:1.3px;text-transform:uppercase;color:#7f94c4;padding:6px 14px 4px;font-weight:700}
+.navbtn.envgo{margin-top:auto;border:1.5px solid var(--orange);color:#ffc58a}
+.navbtn.envgo:hover{background:rgba(242,140,56,.15);color:#fff}
+.envgo + .sidefoot{margin-top:10px}
+.envbtn{background:var(--orange);color:#1b1100;font-weight:800;font-size:.72rem;padding:7px 13px;border-radius:99px}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.tab{padding:8px 14px;border-radius:99px;background:#fff;border:2px solid var(--line);font-weight:700;font-size:.82rem;color:var(--navy);transition:.15s}
+.tab:hover{border-color:var(--blue)}
+.tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.search{padding:10px 14px;border:2px solid var(--line);border-radius:12px;font:inherit;width:100%;max-width:340px;margin-bottom:14px}
+.search:focus{outline:none;border-color:var(--blue)}
+
+.stepper{display:flex;justify-content:space-between;gap:6px;margin:6px 0 20px}
+.stp{flex:1;text-align:center;font-size:.72rem;font-weight:700;color:var(--muted);position:relative}
+.stp i{font-style:normal;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;margin:0 auto 4px;background:#e3e9f5;color:var(--navy);position:relative;z-index:1;font-size:.9rem}
+.stp::before{content:"";position:absolute;top:16px;left:-50%;width:100%;height:3px;background:#e3e9f5}
+.stp:first-child::before{display:none}
+.stp.done i{background:var(--ok);color:#fff}
+.stp.done::before,.stp.cur::before{background:var(--ok)}
+.stp.cur i{background:var(--orange);color:#1b1100;box-shadow:0 0 0 5px rgba(242,140,56,.25)}
+.stp.open i{background:var(--blue);color:#fff}
+details.ph{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+details.ph summary{list-style:none;padding:16px 18px;cursor:pointer;display:flex;gap:14px;align-items:center}
+details.ph summary::-webkit-details-marker{display:none}
+details.ph[open] summary{background:var(--blue2)}
+.ph .num{width:44px;height:44px;border-radius:13px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.ph .body{padding:14px 20px 20px}
+.ph h4{margin:14px 0 6px;font-size:.95rem}
+.ph ul{margin-left:20px;color:#34456a;font-size:.92rem}
+.ph li{margin-bottom:4px}
+
+.meter{position:relative;height:14px;background:#e6ecf8;border-radius:99px;margin:14px 0 8px}
+.meter .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),#a28af0);transition:width .6s}
+.meter .fill.ok{background:linear-gradient(90deg,var(--ok),#4fd1a1)}
+.meter .mk{position:absolute;left:80%;top:-5px;bottom:-5px;width:3px;background:var(--orange);border-radius:2px}
+.badge{text-align:center;padding:16px}
+.badge .em{font-size:2.2rem}
+.badge h4{font-size:.92rem;margin-top:4px}
+.badge p{font-size:.78rem}
+.badge.locked{opacity:.5;filter:grayscale(1)}
+.rk{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff;margin-bottom:8px}
+.rk .pos{width:32px;height:32px;border-radius:50%;background:var(--blue2);color:var(--blue);font-weight:800;display:grid;place-items:center;flex:none}
+.rk.me{border:2px solid var(--orange);background:#fff7ec}
+.rk.me .pos{background:var(--orange);color:#1b1100}
+.rk .pts{margin-left:auto;font-weight:800;color:var(--navy);white-space:nowrap}
+
+.demo-banner{background:#fff7ec;border:1px dashed var(--orange);color:#7a4300;border-radius:14px;padding:12px 16px;font-size:.88rem;margin-bottom:18px}
+.demo-banner b{color:#b45a00}
+.kpi span{font-size:.8rem;color:var(--muted);font-weight:700}
+.kpi b{display:block;font-size:2rem;color:var(--navy);margin:4px 0;line-height:1.1}
+.kpi small{color:var(--muted);font-size:.78rem}
+.donut{width:130px;height:130px;border-radius:50%;display:grid;place-items:center;flex:none}
+.donut span{width:84px;height:84px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;color:var(--navy);text-align:center;font-size:1.25rem;line-height:1.1}
+.donut small{display:block;font-size:.6rem;color:var(--muted);font-weight:600}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.alertc{display:flex;gap:14px;align-items:flex-start;border-left:5px solid var(--bad);flex-wrap:wrap}
+.alertc.m{border-left-color:var(--warn)}
+.alertc.l{border-left-color:var(--ok)}
+.alertc .tx{flex:1;min-width:200px}
+.flow{display:grid;gap:10px;grid-template-columns:1fr}
+.node{background:#fff;border:2px solid var(--blue2);border-radius:14px;padding:14px;text-align:center;font-size:.9rem}
+.node b{display:block;color:var(--navy)}
+.arrow{align-self:center;text-align:center;color:#b45a00;font-weight:800;font-size:.78rem}
+@media(min-width:900px){.flow{grid-template-columns:1fr auto 1fr auto 1fr}}
+input[type=range]{width:100%;accent-color:var(--orange)}
+.big{font-size:1.8rem;font-weight:800;color:var(--navy)}
+@media(max-width:520px){.stp span{font-size:.62rem}}
+
+/* ===== v3 · identidade visual tecnológica + gamificação ===== */
+:root{--bg:#f3f4fa;--shadow:0 10px 30px rgba(20,43,69,.09);--radius:20px}
+body{background:radial-gradient(1100px 480px at 85% -10%,rgba(118,85,217,.12),transparent 60%),var(--bg)}
+.card{border-radius:20px;transition:transform .2s,box-shadow .2s}
+.card:hover{box-shadow:0 14px 34px rgba(20,43,69,.13)}
+.btn{border-radius:14px}
+.btn.primary{background:linear-gradient(135deg,#7655D9,#9477ec);box-shadow:0 6px 18px rgba(118,85,217,.4)}
+.btn.primary:hover{background:linear-gradient(135deg,#6845cf,#8a68e6)}
+.btn.orange{background:linear-gradient(135deg,#F28C38,#f8a85f);color:#2b1700;box-shadow:0 6px 18px rgba(242,140,56,.4)}
+.navbtn.active{background:linear-gradient(135deg,#7655D9,#8d6fe9);box-shadow:0 6px 16px rgba(118,85,217,.45)}
+.bar i,.meter .fill{background:linear-gradient(90deg,#7655D9,#a28af0)}
+.bar.o i{background:linear-gradient(90deg,#F28C38,#ffb066)}
+.hero{background:linear-gradient(135deg,#142B45 0%,#202631 55%,#7655D9 170%)}
+.sim-hero{background:linear-gradient(135deg,#202631,#142B45 70%,#3b2f78)}
+.hud{display:flex;gap:10px;align-items:center;background:linear-gradient(135deg,#142B45,#202631);color:#fff;border-radius:18px;padding:10px 14px;margin-bottom:18px;box-shadow:var(--shadow);cursor:pointer}
+@media(min-width:900px){.hud{position:sticky;top:12px;z-index:12}}
+.hchip{background:rgba(255,255,255,.1);border-radius:99px;padding:6px 12px;font-weight:800;font-size:.85rem;white-space:nowrap}
+.hchip.fire{background:rgba(242,140,56,.22);color:#ffc58a}
+.hxp{flex:1;min-width:0}
+.hl{display:flex;justify-content:space-between;gap:8px;font-size:.78rem;margin-bottom:5px;flex-wrap:wrap}
+.hl span{color:#c9d0e0}
+.hbar{height:9px;background:rgba(255,255,255,.14);border-radius:99px;overflow:hidden}
+.hbar i{display:block;height:100%;background:linear-gradient(90deg,#F28C38,#ffc58a);border-radius:99px;transition:width .7s}
+.trail .th{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.trail .th .em{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#ece7fb,#fff1e1);display:grid;place-items:center;font-size:1.6rem}
+.path{display:flex;flex-direction:column}
+.pn{position:relative;display:flex;gap:14px;align-items:center;padding:10px 12px;border-radius:16px;cursor:pointer;transition:.2s}
+.pn:hover{background:#f4f1fd}
+.pn+.pn::before{content:"";position:absolute;left:36px;top:-14px;height:26px;border-left:3px dashed #cfc6ee}
+.pn.done+.pn::before{border-left-style:solid;border-color:#7655D9}
+.orb{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.2rem;flex:none;background:#e6e1f6;color:#5a4a99;position:relative;z-index:1}
+.pn.open .orb{background:linear-gradient(135deg,#F28C38,#f8a85f);color:#2b1700;box-shadow:0 0 0 6px rgba(242,140,56,.2);animation:pulse 2s infinite}
+.pn.done .orb{background:linear-gradient(135deg,#7655D9,#9477ec);color:#fff}
+.pn.lock{opacity:.6}.pn.lock .orb{background:#e3e5ee;color:#7b8396}
+.pi small{display:block;color:var(--muted);font-size:.84rem}
+.sdots{display:flex;gap:8px;flex-wrap:wrap}
+.sd{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#ececf4;font-size:.72rem;font-weight:800;color:#8a90a5}
+.sd.on{background:linear-gradient(135deg,#F28C38,#f8a85f);color:#2b1700}
+.dm .tipo{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.dm.fin{border:2px solid #7655D9;background:linear-gradient(135deg,#fff,#f4f1fd)}
+.lgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 16px}
+.lgb{text-align:center;padding:12px 4px;border-radius:16px;border:2px solid var(--line);background:#fff;font-weight:800;font-size:.8rem}
+.lgb .em{font-size:1.7rem;display:block}
+.lgb.cur{border-color:#F28C38;background:#fff7ec}.lgb.sel{box-shadow:0 0 0 3px rgba(118,85,217,.3)}
+.zline{text-align:center;font-size:.72rem;color:#0f7a54;font-weight:800;margin:2px 0 10px}
+.rk.zone{border-color:#bfe9d4}
+.ach{text-align:center;padding:18px 14px}
+.ach .md{width:72px;height:72px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;font-size:2rem;background:linear-gradient(135deg,#7655D9,#F28C38);box-shadow:0 8px 20px rgba(118,85,217,.35);border:4px solid #fff;outline:3px solid #e6e1f6}
+.ach.lk .md{background:#e3e5ee;filter:grayscale(1);box-shadow:none;opacity:.7}
+.ach h4{font-size:.95rem}.ach p{font-size:.8rem;margin:4px 0 8px}
+.gcmp{display:grid;grid-template-columns:110px 1fr 60px;gap:10px;align-items:center;margin-bottom:10px;font-size:.85rem;font-weight:600}
+.xpfly{position:fixed;left:50%;top:38%;transform:translate(-50%,0);z-index:80;font-size:2.4rem;font-weight:900;color:#fff;text-shadow:0 4px 24px rgba(118,85,217,.9),0 2px 0 #7655D9;pointer-events:none;animation:fly 1.6s ease forwards;text-align:center}
+.xpfly small{display:block;font-size:.9rem;color:#ffc58a;font-weight:700}
+@keyframes fly{0%{opacity:0;transform:translate(-50%,20px) scale(.6)}20%{opacity:1;transform:translate(-50%,0) scale(1.15)}100%{opacity:0;transform:translate(-50%,-90px) scale(1)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:79;overflow:hidden}
+.confetti i{position:absolute;top:-14px;width:9px;height:14px;border-radius:2px;animation:fall 1.6s ease-in forwards}
+@keyframes fall{to{top:105%;transform:translateX(40px) rotate(720deg);opacity:.8}}
+.achpop{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:90;background:linear-gradient(135deg,#142B45,#202631);color:#fff;border:2px solid #F28C38;border-radius:16px;padding:12px 18px;box-shadow:0 14px 40px rgba(0,0,0,.35);animation:drop 3.2s ease forwards;text-align:center;max-width:92vw}
+@keyframes drop{0%{transform:translate(-50%,-90px);opacity:0}10%,85%{transform:translate(-50%,0);opacity:1}100%{transform:translate(-50%,-90px);opacity:0}}
+@keyframes pulse{50%{box-shadow:0 0 0 12px rgba(242,140,56,.05)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- Menu lateral (computador) -->
+<aside class="sidebar" id="sidebar"></aside>
+
+<!-- Barra superior (celular) -->
+<header class="topbar">
+  <div class="brand" onclick="goHome()" id="topbrand"></div>
+  <button class="envbtn" id="topenv" onclick="switchEnv()">🏛 Coordenação</button>
+</header>
+
+<main><div id="app"></div></main>
+
+<!-- Menu inferior (celular) -->
+<nav class="bottomnav" id="bottomnav"></nav>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   ENGAGEMENT — protótipo demonstrativo
+   Tudo roda no navegador. Sem APIs, sem banco, sem login real.
+   ========================================================= */
+
+/* ---------- Ícones (SVG inline) ---------- */
+const IC = {
+  home:'<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10" />',
+  book:'<path d="M4 4h7a3 3 0 013 3v13a2 2 0 00-2-2H4zM20 4h-6a3 3 0 00-3 3v13a2 2 0 012-2h7z"/>',
+  flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+  sim:'<circle cx="12" cy="12" r="9"/><path d="M10 8l6 4-6 4z"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0M16 4.5a3.5 3.5 0 010 7M18 14a6 6 0 013.5 6"/>',
+  brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  trophy:'<path d="M8 4h8v6a4 4 0 01-8 0zM8 6H4v2a4 4 0 004 4M16 6h4v2a4 4 0 01-4 4M12 14v4M8 21h8M10 18h4"/>',
+  chart:'<path d="M4 20V4M4 20h16M8 16v-5M13 16V8M18 16v-3"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M14.5 9a2.5 2 0 00-2.5-1.5c-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2A2.7 2 0 019.5 15M12 6v1.5M12 16.5V18"/>',
+  grid:'<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/>',
+  swap:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
+  building:'<path d="M4 21V5l8-2v18M12 9l8 2v10M3 21h18M8 8h1M8 12h1M8 16h1M16 14h1M16 18h1"/>'
+};
+const icon = n => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const LOGO = `<img src="data:image/png;base64,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" alt="Logo Engagement" width="56" height="35" style="width:56px;height:auto;flex:none">`;
+const BRAND = `${LOGO}<div><b>Engagement</b><small>Da teoria à prática.<br>Do estudante ao engenheiro.</small></div>`;
+
+/* Dois ambientes: estudante e coordenação (instituição de ensino) */
+const NAV_EST = [
+  ['home','Início','home'],
+  ['today','Missões de Hoje','target'],
+  ['map','Mapa de Aprendizagem','map'],
+  ['league','Ligas e Ranking','trophy'],
+  ['rank','Conquistas','trophy'],
+  ['esq','Esquenta Engenharia','bolt'],
+  ['journey','Minha Jornada','map'],
+  ['missions','Missões da semana','target'],
+  ['learn','Aulas','book'],
+  ['challenges','Desafios práticos','flag'],
+  ['sim','Simulador (especial)','sim'],
+  ['mentors','Mentorias','users'],
+  ['portfolio','Portfólio','brief']
+];
+const NAV_COORD = [
+  ['dash','Painel','chart'],
+  ['alunos','Estudantes','users'],
+  ['biz','Modelo de negócio','coin']
+];
+const ALLNAV = NAV_EST.concat(NAV_COORD);
+const COORD_VIEWS = ['dash','alunos','biz'];
+
+/* ---------- Dados demonstrativos ---------- */
+const COURSES = {
+  calc:{ name:'Cálculo I', emoji:'📈', sem:'1º semestre', hours:60,
+    desc:'Limites, derivadas e integrais: a linguagem matemática da variação e do acúmulo.',
+    lesson:{
+      title:'Derivadas: a taxa de variação na prática',
+      resumo:[
+        'A <b>derivada</b> mede o quão rápido uma grandeza muda em relação a outra (ex.: posição × tempo → velocidade).',
+        'Regra do tombo (potência): se f(x) = xⁿ, então f′(x) = n·xⁿ⁻¹.',
+        'Derivada igual a zero indica ponto crítico: candidato a máximo ou mínimo.'],
+      formula:'f(x) = x³  →  f′(x) = 3x²',
+      app:'Na engenharia civil, a derivada do momento fletor em uma viga indica onde a força cortante é nula — justamente onde a viga sofre a maior flexão e precisa de mais reforço.',
+      ex:[
+        {q:'Qual é a derivada de f(x) = x³ no ponto x = 2?', o:['6','12','8','3'], c:1, e:'f′(x) = 3x²; em x = 2 temos 3·4 = 12.'},
+        {q:'Se a posição de um carro é s(t) = 5t², qual é a sua velocidade em t = 3 s?', o:['15 m/s','30 m/s','45 m/s','10 m/s'], c:1, e:'v(t) = s′(t) = 10t; em t = 3 s, v = 30 m/s.'},
+        {q:'Para encontrar o ponto de máximo de uma função, o primeiro passo é:', o:['Integrar a função','Igualar a derivada a zero','Calcular o limite no infinito','Multiplicar por 2'], c:1, e:'Os pontos críticos surgem quando f′(x) = 0. Depois verificamos se é máximo ou mínimo.'}
+      ]}},
+  fis:{ name:'Física I', emoji:'⚙️', sem:'1º semestre', hours:60,
+    desc:'Mecânica clássica: movimento, forças, energia e equilíbrio de corpos.',
+    lesson:{
+      title:'Leis de Newton e equilíbrio de forças',
+      resumo:[
+        '<b>1ª Lei:</b> sem força resultante, o corpo mantém seu estado de movimento (inércia).',
+        '<b>2ª Lei:</b> a força resultante é igual à massa vezes a aceleração.',
+        '<b>3ª Lei:</b> toda ação gera uma reação de mesma intensidade e sentido oposto.',
+        'Uma estrutura em <b>equilíbrio estático</b> tem soma de forças e de momentos igual a zero.'],
+      formula:'F = m · a      ΣF = 0  (equilíbrio)',
+      app:'Quando um engenheiro dimensiona um cabo de sustentação de uma ponte, ele garante que a tração total equilibre o peso do tabuleiro e dos veículos — é o equilíbrio estático em ação.',
+      ex:[
+        {q:'Que força é necessária para acelerar um bloco de 50 kg a 2 m/s²?', o:['25 N','52 N','100 N','200 N'], c:2, e:'F = m·a = 50 · 2 = 100 N.'},
+        {q:'Uma estrutura está em equilíbrio estático. Isso significa que:', o:['Ela está em movimento acelerado','A soma das forças é zero','Não existem forças atuando','Só o peso atua sobre ela'], c:1, e:'Em equilíbrio estático, ΣF = 0 e ΣM = 0. As forças existem, mas se compensam.'},
+        {q:'Um livro sobre a mesa recebe da mesa uma força para cima. Esse par ação-reação é explicado pela:', o:['1ª Lei de Newton','2ª Lei de Newton','3ª Lei de Newton','Lei da gravitação'], c:2, e:'A 3ª Lei descreve pares de forças de mesma intensidade e sentidos opostos.'}
+      ]}},
+  alg:{ name:'Álgebra Linear', emoji:'🧮', sem:'2º semestre', hours:60,
+    desc:'Matrizes, sistemas lineares e vetores: base para simulações, circuitos e estruturas.',
+    lesson:{
+      title:'Sistemas lineares e matrizes',
+      resumo:[
+        'Um <b>sistema linear</b> reúne várias equações com as mesmas incógnitas e pode ser escrito como A·x = b.',
+        'O <b>determinante</b> de uma matriz 2×2 [[a,b],[c,d]] é a·d − b·c. Se for diferente de zero, o sistema tem solução única.',
+        'Programas de engenharia resolvem sistemas com milhares de equações usando matrizes.'],
+      formula:'det [[a, b],[c, d]] = a·d − b·c',
+      app:'Em uma treliça, cada nó gera equações de equilíbrio. O conjunto delas forma um sistema linear que dá a força em cada barra — é assim que softwares de cálculo estrutural funcionam.',
+      ex:[
+        {q:'Qual é o determinante da matriz [[2, 1],[1, 3]]?', o:['5','6','7','1'], c:0, e:'det = 2·3 − 1·1 = 6 − 1 = 5.'},
+        {q:'Resolva: x + y = 5 e x − y = 1. Qual é o valor de x?', o:['2','3','4','5'], c:1, e:'Somando as equações: 2x = 6, logo x = 3 (e y = 2).'},
+        {q:'Se o determinante de uma matriz 2×2 é zero, o sistema associado:', o:['Sempre tem solução única','Não tem solução única','É impossível de escrever','Tem sempre 2 soluções'], c:1, e:'Determinante zero indica que as equações são dependentes: não há solução única.'}
+      ]}},
+  intro:{ name:'Introdução à Engenharia', emoji:'🏗️', sem:'1º semestre', hours:40,
+    desc:'O papel do engenheiro, o ciclo de projeto, ética profissional e trabalho em equipe.',
+    lesson:{
+      title:'O ciclo de um projeto de engenharia',
+      resumo:[
+        'Todo projeto passa por etapas: <b>identificar o problema → pesquisar → propor soluções → prototipar → testar → melhorar</b>.',
+        'Engenheiros trabalham com <b>restrições</b>: prazo, custo, segurança, normas técnicas e impacto ambiental.',
+        'Competências como comunicação, negociação e colaboração pesam tanto quanto o cálculo no dia a dia da profissão.'],
+      formula:'Problema → Ideias → Protótipo → Teste → Melhoria',
+      app:'Uma obra raramente falha por erro de conta apenas: falhas de comunicação entre projeto, compras, financeiro e execução são causas frequentes de atrasos e retrabalho.',
+      ex:[
+        {q:'Qual etapa vem logo depois de “propor soluções” no ciclo de projeto?', o:['Identificar o problema','Prototipar','Entregar ao cliente','Arquivar'], c:1, e:'Depois de propor soluções, constrói-se um protótipo para testar a ideia.'},
+        {q:'Qual destes é um exemplo de restrição de projeto?', o:['Orçamento disponível','Cor favorita da equipe','Marca do computador','Horário do café'], c:0, e:'Orçamento, prazo, segurança e normas são restrições típicas.'},
+        {q:'Por que a comunicação é central na engenharia?', o:['Porque substitui os cálculos','Porque alinha setores com interesses diferentes','Porque dispensa documentação','Porque elimina prazos'], c:1, e:'Projetos envolvem pessoas e setores com objetivos distintos; comunicar bem evita retrabalho.'}
+      ]}}
+};
+
+const CHALLENGES = {
+  ponte:{ title:'Construção de uma ponte sustentável', emoji:'🌉', level:'Intermediário', time:'3 semanas',
+    objetivo:'Projetar o modelo de uma pequena ponte para pedestres que una resistência estrutural, baixo custo e materiais de menor impacto ambiental.',
+    contexto:'Uma comunidade ribeirinha precisa de uma passarela segura para chegar à escola, mas só dispõe de orçamento reduzido e quer preservar a mata ciliar ao redor do rio.',
+    conhecimentos:['Física I (forças e equilíbrio)','Cálculo I (otimização)','Álgebra Linear (treliças)','Introdução à Engenharia'],
+    passos:['Levantar o vão a ser vencido e a carga prevista de pedestres','Comparar 3 materiais (bambu tratado, madeira certificada, aço reciclado)','Esboçar uma treliça e calcular as forças nas barras principais','Montar a tabela de custo × impacto ambiental e justificar sua escolha']},
+  obra:{ title:'Planejamento de uma pequena obra', emoji:'🧱', level:'Iniciante', time:'2 semanas',
+    objetivo:'Montar o planejamento de uma reforma de 40 m² com cronograma, lista de materiais e estimativa de custos.',
+    contexto:'Uma família quer ampliar a casa com um cômodo novo. Ela precisa saber quanto vai gastar, quanto tempo leva e em que ordem os serviços devem acontecer.',
+    conhecimentos:['Introdução à Engenharia (ciclo de projeto)','Álgebra Linear (planilhas e matrizes)','Cálculo I (taxas e custos)','Comunicação e negociação'],
+    passos:['Listar os serviços em ordem lógica (fundação, paredes, cobertura, acabamento)','Estimar a quantidade de materiais para cada serviço','Montar um cronograma simples em semanas','Definir o orçamento e uma reserva de 10% para imprevistos']},
+  chuva:{ title:'Projeto de captação de água da chuva', emoji:'🌧️', level:'Iniciante', time:'2 semanas',
+    objetivo:'Dimensionar um sistema de captação de água da chuva para uma escola, reduzindo o consumo de água tratada.',
+    contexto:'A escola gasta muito com água para limpeza e irrigação do jardim. O telhado tem boa área de coleta e a região tem períodos de chuva bem definidos.',
+    conhecimentos:['Física I (pressão e vazão)','Cálculo I (volumes)','Introdução à Engenharia (sustentabilidade)','Trabalho em equipe'],
+    passos:['Medir a área de telhado disponível','Usar a calculadora abaixo para estimar o volume captado','Definir o tamanho da cisterna e o destino da água','Apresentar a economia mensal estimada para a direção da escola'],
+    calc:true}
+};
+
+const MENTORS = [
+  {id:1,nome:'Marina Costa',area:'Engenharia Civil',esp:'Gerenciamento de obras',ini:'MC',anos:12,
+   bio:'Engenheira responsável por obras comerciais e residenciais. Gosta de mostrar como planejamento e comunicação evitam atrasos.',
+   temas:['Cronograma e planejamento','Primeiro estágio em obra','Como lidar com equipes de campo'],dica:'Visite uma obra o quanto antes. Nenhum livro substitui ver o concreto sendo lançado.'},
+  {id:2,nome:'Rafael Nogueira',area:'Engenharia Mecânica',esp:'Projetos e manutenção industrial',ini:'RN',anos:9,
+   bio:'Atua em manutenção preditiva em indústria de alimentos. Defende que a base de Física é o que mais pesa na carreira.',
+   temas:['Física aplicada','Estágio na indústria','Cálculo na prática'],dica:'Quando uma fórmula parecer abstrata, pergunte: onde isso aparece em uma máquina real?'},
+  {id:3,nome:'Beatriz Almeida',area:'Engenharia de Software',esp:'Sistemas e automação',ini:'BA',anos:7,
+   bio:'Desenvolve sistemas de automação para fábricas. Mostra como Álgebra Linear aparece em gráficos e inteligência de dados.',
+   temas:['Álgebra Linear aplicada','Programação para engenheiros','Portfólio de projetos'],dica:'Publique seus pequenos projetos. Um portfólio vale mais que uma lista de disciplinas.'},
+  {id:4,nome:'Carlos Henrique Prado',area:'Engenharia Elétrica',esp:'Energia solar e eficiência energética',ini:'CP',anos:15,
+   bio:'Projeta usinas solares e consultorias de economia de energia. Gosta de conversar com quem está em dúvida sobre o curso.',
+   temas:['Energia renovável','Permanecer no curso','Mercado de trabalho'],dica:'Dúvida no começo do curso é normal. Procure conectar cada disciplina a um problema real.'},
+  {id:5,nome:'Juliana Ferraz',area:'Engenharia Ambiental',esp:'Recursos hídricos e saneamento',ini:'JF',anos:10,
+   bio:'Trabalha com reúso de água e captação de chuva em escolas e indústrias.',
+   temas:['Sustentabilidade','Projetos sociais','Carreira no setor público'],dica:'Projetos de extensão abrem portas e mostram impacto real, mesmo no 1º semestre.'},
+  {id:6,nome:'Eduardo Tavares',area:'Engenharia de Produção',esp:'Negociação e gestão de equipes',ini:'ET',anos:11,
+   bio:'Gerente de operações e especialista em negociação. Ensina como alinhar setores com interesses diferentes.',
+   temas:['Soft skills','Negociação','Liderança de projetos'],dica:'Escute primeiro. Quem entende o interesse do outro negocia melhor e de forma mais rápida.'}
+];
+
+/* ---------- Simulador ---------- */
+const CHARS = {
+  eng:{ nome:'Marina Costa', cargo:'Engenheira responsável', emoji:'👷‍♀️', cor:'#ece7fb',
+    fala:'A concretagem da laje do 5º andar parou há 12 dias porque o concreto não chegou. Se continuarmos assim, o atraso total chega a 4 semanas. Preciso de uma decisão ainda esta semana, mas não quero abrir mão da segurança nem da qualidade.',
+    fundo:'<b>Interesse real:</b> proteger a qualidade e a segurança da obra. Ela aceitaria mudar a sequência de serviços, desde que cada etapa seja concluída com a cura correta do concreto.'},
+  com:{ nome:'Rafael Duarte', cargo:'Gerente comercial', emoji:'🧑‍💼', cor:'#fff1e1',
+    fala:'O cliente já ligou duas vezes. A entrega estava prometida para o dia 30 e eu não posso perder esse contrato. Preciso de uma data firme para falar com ele — e rápido!',
+    fundo:'<b>Interesse real:</b> manter a confiança do cliente. Ele não precisa da data original, precisa de transparência e de um novo prazo que seja realmente cumprido.'},
+  fin:{ nome:'Helena Prado', cargo:'Responsável financeiro', emoji:'👩‍💻', cor:'#e6f8f0',
+    fala:'O orçamento já está 8% acima. Qualquer solução que gere custo extra precisa ser muito bem justificada — horas extras, fornecedor novo, multa… tudo isso pesa no caixa deste mês.',
+    fundo:'<b>Interesse real:</b> evitar estourar o caixa. Ela aceita um custo extra pontual se houver previsibilidade e se o desembolso for diluído ao longo das semanas.'},
+  for:{ nome:'Antônio Lima', cargo:'Fornecedor de concreto', emoji:'👨‍🔧', cor:'#f3e8ff',
+    fala:'Tivemos uma quebra na central de concreto e perdi dois caminhões betoneira. Consigo entregar 60% do volume agora e o restante em 10 dias. Não foi por falta de vontade, o problema foi maior que eu.',
+    fundo:'<b>Interesse real:</b> manter a parceria. Ele pode ser flexível em prazo e em entregas parciais, se não for tratado como o único culpado.'}
+};
+const ALTS = {
+  A:{ titulo:'Acelerar a qualquer custo', resumo:'Contratar outro fornecedor mais caro, autorizar horas extras e concretar tudo de uma vez.',
+    pontos:['Prazo recuperado em boa parte','Custo extra elevado','Equipe sobrecarregada'],
+    m:{Prazo:78,Custo:28,Qualidade:68,Equipe:35,Cliente:65},
+    base:{com:60,esc:42,col:45,neg:50},
+    conseq:'A obra recupera cerca de 2 semanas, mas o custo estoura em 14% e a equipe trabalha em ritmo exaustivo. O novo fornecedor entrega com padrão de cura diferente e a fiscalização pede ensaios adicionais. O cliente fica satisfeito com a data, porém o setor financeiro e a equipe de campo saem desgastados.',
+    fb:{
+      com:['Você priorizou uma solução rápida e deixou claro que o prazo era importante.','Faltou alinhar a decisão com o financeiro e com o fornecedor antes de agir. As pessoas souberam da decisão depois, não participaram dela.'],
+      esc:['Você percebeu a pressão do comercial e agiu para resolver o problema.','As preocupações da engenheira (cura do concreto) e da financeira (caixa) não foram incorporadas. Pergunte “o que você precisa para isso funcionar?” antes de decidir.'],
+      col:['Houve esforço para manter o objetivo do cliente.','A solução veio de cima para baixo. Convidar os setores a construir a saída em conjunto gera mais comprometimento e menos desgaste.'],
+      neg:['Você trocou custo por prazo, o que é uma troca válida em alguns casos.','Não houve negociação com o fornecedor atual, que poderia entregar parte do concreto. Existiam opções intermediárias que você ainda não explorou.']}},
+  B:{ titulo:'Reunião conjunta e replanejamento', resumo:'Reunir os quatro setores, aceitar a entrega parcial do fornecedor, reorganizar a sequência de serviços e comunicar um novo prazo realista ao cliente.',
+    pontos:['Entrega em duas etapas','Custo extra pequeno','Cliente informado com transparência'],
+    m:{Prazo:68,Custo:66,Qualidade:88,Equipe:82,Cliente:80},
+    base:{com:84,esc:72,col:90,neg:82},
+    conseq:'O fornecedor entrega 60% do concreto agora e o restante em 10 dias. A equipe adianta alvenaria e instalações enquanto aguarda a segunda concretagem. O atraso final cai para 2 semanas, com custo extra de apenas 3%. O cliente recebe um novo cronograma honesto, com marcos semanais, e a confiança se mantém.',
+    fb:{
+      com:['Você tornou o problema transparente para todos e alinhou uma única versão da situação, inclusive ao cliente.','Para a próxima vez, registre os combinados por escrito (ata curta) para evitar interpretações diferentes depois.'],
+      esc:['Você buscou entender o que cada setor precisava, e isso permitiu usar o interesse real de cada um (qualidade, confiança, caixa, parceria).','Continue praticando perguntas abertas e a paráfrase (“se entendi bem, o que você precisa é…”) para confirmar que compreendeu.'],
+      col:['Os quatro setores participaram da solução. Esse envolvimento aumenta o comprometimento com o resultado.','Defina responsáveis e datas para cada ação logo na reunião, para que a colaboração se transforme em execução.'],
+      neg:['Você buscou ganhos para todos (entrega parcial, novo cronograma, custo diluído), em vez de ganhar de um lado e perder do outro.','Antes de se reunir, vale preparar alternativas e limites (o que aceitaria e o que não aceitaria) para negociar ainda com mais firmeza.']}},
+  C:{ titulo:'Culpar o fornecedor e esconder o atraso', resumo:'Aplicar multa ao fornecedor, cobrar velocidade da equipe e dizer ao cliente que a obra segue conforme o previsto.',
+    pontos:['Nenhum custo imediato','Fornecedor desmotivado','Risco alto de perder a confiança do cliente'],
+    m:{Prazo:35,Custo:55,Qualidade:42,Equipe:28,Cliente:20},
+    base:{com:22,esc:24,col:20,neg:34},
+    conseq:'O fornecedor se sente injustiçado e reduz a prioridade da sua obra. Sem um plano real, o atraso chega a 5 semanas. Quando o cliente descobre a situação por conta própria, a confiança é quebrada e ele cogita rescindir o contrato. A equipe, pressionada, comete retrabalho na armação.',
+    fb:{
+      com:['Você tentou proteger a imagem da empresa diante do cliente, e essa preocupação é legítima.','Esconder o atraso quase sempre piora a situação: o cliente descobre e a confiança cai. Comunicar cedo, com um plano, é muito mais seguro.'],
+      esc:['Houve atenção ao risco comercial do contrato.','Faltou ouvir o fornecedor, que explicou a causa real e ofereceu entrega parcial. Ouvir antes de culpar abre alternativas que você não tinha.'],
+      col:['Você tentou manter o foco no resultado da obra.','Concentrar a culpa em uma pessoa enfraquece a cooperação. Pergunte “como resolvemos isso juntos?” em vez de “quem errou?”.'],
+      neg:['Você conseguiu manter o custo imediato sob controle.','A multa foi um instrumento de pressão que encerrou a conversa. Negociar prazos, entregas parciais e compensações costuma manter a parceria e resolver mais rápido.']}}
+};
+const SKILLS = {com:'Comunicação',esc:'Escuta ativa',col:'Colaboração',neg:'Negociação'};
+const SKILL_ICON = {com:'💬',esc:'👂',col:'🤝',neg:'⚖️'};
+
+/* ---------- Estado ---------- */
+const KEY='engagement-proto-v1';
+function defaults(){
+  return {progress:{calc:35,fis:20,alg:10,intro:50}, lessons:{}, quiz:{}, joined:{}, ch:{}, favs:{}, bestSim:null, simRuns:0, esq:{}, mq:{}, missions:{}, enc:{}, xp:0, xpd:{}, cnt:0, prac:0, st:{cur:0,best:0,last:'',days:{}}, wk:{k:'',xp:0}, lg:0, ach:{}, daily:{d:'',ans:{},done:{},bonus:false}, map:{}, ms:{}, off:0, lastWeek:null};
+}
+function loadState(){
+  try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s) return Object.assign(defaults(),s); }catch(e){}
+  return defaults();
+}
+let S = loadState();
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+let sim = {heard:{}, open:null, choice:null};
+let stack = [];
+let cur = {v:'home', p:null};
+let env = 'est';                       // 'est' = estudante | 'coord' = coordenação
+let leagueSel = 2;                     // liga exibida no ranking
+let fil = {k:'todos', q:''};           // filtro da lista de estudantes (coordenação)
+
+/* ---------- Utilidades ---------- */
+const $ = s => document.querySelector(s);
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),2600); }
+function openModal(html){ $('#modal').innerHTML=`<button class="x" onclick="closeModal()" aria-label="Fechar">✕</button>`+html; $('#overlay').classList.add('open'); $('#modal').scrollTop=0; }
+function closeModal(){ $('#overlay').classList.remove('open'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+function avg(o){ const v=Object.values(o); return Math.round(v.reduce((a,b)=>a+b,0)/v.length); }
+function lvl(n){ return n>=80?['Excelente','a']:n>=60?['Bom','b']:n>=40?['Em desenvolvimento','c']:['Precisa de atenção','d']; }
+function barc(n){ return n>=70?'g':n>=45?'':'r'; }
+
+/* ---------- Navegação (SPA) ---------- */
+function buildNav(){
+  const est = env==='est';
+  const nav = est ? NAV_EST : NAV_COORD;
+  $('#sidebar').innerHTML = `<div class="brand" onclick="goHome()">${BRAND}</div>`+
+    `<div class="navlabel">${est?'Ambiente do estudante':'Área da Coordenação'}</div>`+
+    nav.map(n=>`<button class="navbtn" data-v="${n[0]}" onclick="go('${n[0]}')">${icon(n[2])}${n[1]}</button>`).join('')+
+    `<button class="navbtn envgo" onclick="switchEnv()">${icon(est?'building':'swap')}${est?'Área da Coordenação':'Ambiente do estudante'}</button>`+
+    `<div class="sidefoot"><span class="tag-proto">PROTÓTIPO</span><br>Dados fictícios para demonstração. Maratona de Inovação Escolar.<br><a onclick="resetDemo()" style="color:#ffc58a;cursor:pointer;font-weight:700">↺ Reiniciar dados</a></div>`;
+  $('#topbrand').innerHTML = LOGO+'<div><b>Engagement</b></div>';
+  const bn = est ? [['home','Início','home'],['today','Hoje','target'],['map','Mapa','map'],['league','Ligas','trophy']] : NAV_COORD;
+  $('#bottomnav').innerHTML = bn.map(n=>`<button data-v="${n[0]}" onclick="go('${n[0]}')">${icon(n[2])}${n[1]}</button>`).join('')+
+    (est ? `<button onclick="openMore()">${icon('grid')}Mais</button>` : `<button onclick="switchEnv()">${icon('swap')}Estudante</button>`);
+  $('#topenv').textContent = est ? '🏛 Coordenação' : '🎓 Estudante';
+}
+function goHome(){ go(env==='est'?'home':'dash'); }
+function switchEnv(){ go(env==='est'?'dash':'home'); }
+function openMore(){
+  const items=[['rank','Conquistas','trophy'],['sim','Simulador Profissional','sim'],['journey','Minha Jornada','map'],['missions','Missões da semana','target'],['esq','Esquenta Engenharia','bolt'],['learn','Central de Aprendizagem','book'],['challenges','Desafios práticos','flag'],['rank','Conquistas e ranking','trophy'],['mentors','Mentorias','users'],['portfolio','Meu portfólio','brief'],['dash','Área da Coordenação','building'],['biz','Modelo de negócio','coin']];
+  openModal(`<h3>Mais opções</h3><div class="grid g2" style="margin-top:14px">`+
+    items.map(i=>`<button class="btn line" style="justify-content:flex-start" onclick="go('${i[0]}')">${icon(i[2])}${i[1]}</button>`).join('')+`</div>`);
+}
+function resetDemo(){
+  if(!confirm('Reiniciar todos os dados da demonstração (progresso, pontos e missões)?')) return;
+  S = defaults(); lgSel=null; sim = {heard:{},open:null,choice:null}; fil = {k:'todos',q:''}; save();
+  go('home'); toast('Demonstração reiniciada.');
+}
+function parentOf(v){ return ({lesson:'learn',esqtrail:'esq',mission:'missions'})[v] || v; }
+function go(v,p,isBack){
+  const e = COORD_VIEWS.includes(v) ? 'coord' : 'est';
+  if(!isBack && cur && !(cur.v===v && cur.p===p)) stack.push(cur);
+  if(!isBack && ALLNAV.some(n=>n[0]===v) && !p) stack = (v==='home'||v==='dash') ? [] : [e==='est'?{v:'home',p:null}:{v:'dash',p:null}];
+  if(e!==env){ env=e; buildNav(); }
+  cur = {v,p};
+  closeModal();
+  render();
+  window.scrollTo({top:0});
+}
+function back(){
+  const prev = stack.pop() || {v:'home',p:null};
+  go(prev.v, prev.p, true);
+}
+function backBtn(label){ return `<button class="backbtn" onclick="back()">← ${label||'Voltar'}</button>`; }
+function render(keepScroll){
+  const y = window.scrollY;
+  const fn = VIEWS[cur.v] || VIEWS.home;
+  $('#app').innerHTML = (env==='est'?hudHTML():'')+`<div class="view">${fn(cur.p)}</div>`+
+    `<div class="foot">Engagement · protótipo demonstrativo · todos os dados são fictícios · <a onclick="resetDemo()" style="color:var(--blue);cursor:pointer;font-weight:700">Reiniciar demonstração</a></div>`;
+  document.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('active', b.dataset.v===parentOf(cur.v)));
+  if(keepScroll) window.scrollTo({top:y});
+}
+
+/* ---------- Telas ---------- */
+const VIEWS = {};
+
+/* 1. INÍCIO */
+VIEWS.home = ()=>{
+  const prog = avg(S.progress);
+  const nDone = Object.keys(S.lessons).length;
+  const courseCards = Object.entries(COURSES).map(([id,c])=>`
+    <div class="card course">
+      <div class="ico">${c.emoji}</div><h3>${c.name}</h3>
+      <p>${c.desc}</p>
+      <div class="meta"><span>${c.sem}</span><span>${S.progress[id]}%</span></div>
+      <div class="bar"><i style="width:${S.progress[id]}%"></i></div>
+      <button class="btn ghost sm" onclick="go('lesson','${id}')">Acessar aula</button>
+    </div>`).join('');
+  const chCards = Object.entries(CHALLENGES).map(([id,c])=>`
+    <div class="card">
+      <div style="font-size:1.8rem">${c.emoji}</div>
+      <h3 style="margin-top:8px">${c.title}</h3>
+      <p>${c.objetivo.slice(0,95)}…</p>
+      <div class="row" style="margin-top:10px"><span class="chip o">${c.level}</span><span class="chip">${c.time}</span></div>
+      <button class="btn primary sm" style="margin-top:14px" onclick="openChallenge('${id}')">Ver desafio</button>
+    </div>`).join('');
+  return `
+  <div class="hero">
+    <div class="eyebrow">Da teoria à prática. Do estudante ao engenheiro.</div>
+    <h2>Bem-vindo(a) ao Engagement, Ana! 👋</h2>
+    <p>Descubra para que servem Cálculo, Física e Álgebra Linear, resolva problemas reais da profissão e desenvolva as competências que o mercado de trabalho procura.</p>
+    <div class="row" style="position:relative;z-index:1;margin-top:16px">
+      <button class="btn orange" onclick="go('today')">🎯 Missões de Hoje</button>
+      <button class="btn" style="background:rgba(255,255,255,.14);color:#fff" onclick="go('map')">🗺 Mapa de Aprendizagem</button>
+    </div>
+  </div>
+
+  ${homeExtras()}
+
+  <div class="sec"><h3>Seu progresso acadêmico</h3></div>
+  <div class="card">
+    <div class="row" style="gap:22px;flex-wrap:wrap">
+      <div class="ring" style="--p:${prog}"><span>${prog}%</span></div>
+      <div style="flex:1;min-width:200px">
+        <h3>Engenharia Civil · 2º semestre</h3>
+        <p>Você está indo bem! Continue avançando nas aulas e nos desafios para destravar seus certificados.</p>
+      </div>
+      <div class="row" style="gap:26px">
+        <div class="stat"><b>${nDone}</b><span>aulas concluídas</span></div>
+        <div class="stat"><b>${Object.keys(S.joined).length}</b><span>desafios iniciados</span></div>
+        <div class="stat"><b>${S.simRuns}</b><span>simulações</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec"><h3>Cursos disponíveis</h3><a onclick="go('learn')">Ver todos →</a></div>
+  <div class="grid g4" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">${courseCards}</div>
+
+  <div class="sec"><h3>Desafios em destaque</h3><a onclick="go('challenges')">Ver todos →</a></div>
+  <div class="grid g3">${chCards}</div>
+
+  <div class="sec"><h3>Continue explorando</h3></div>
+  <div class="grid g2">
+    <div class="card"><h3>🧑‍🏫 Converse com quem já está na profissão</h3><p>Conheça perfis de mentores de diversas engenharias e veja dicas de carreira.</p><button class="btn ghost sm" style="margin-top:12px" onclick="go('mentors')">Ver mentorias</button></div>
+    <div class="card"><h3>💼 Seu portfólio profissional</h3><p>Reúna projetos, certificados e competências em um só lugar.</p><button class="btn ghost sm" style="margin-top:12px" onclick="go('portfolio')">Abrir portfólio</button></div>
+  </div>`;
+};
+
+/* 2. CENTRAL DE APRENDIZAGEM */
+VIEWS.learn = ()=>{
+  const cards = Object.entries(COURSES).map(([id,c])=>`
+    <div class="card course">
+      <div class="ico">${c.emoji}</div>
+      <div class="row" style="justify-content:space-between"><h3>${c.name}</h3><span class="chip">${c.sem}</span></div>
+      <p style="margin-top:6px">${c.desc}</p>
+      <div class="meta"><span>${c.hours} horas</span><span>${S.progress[id]}% concluído</span></div>
+      <div class="bar ${S.progress[id]>=100?'g':''}"><i style="width:${S.progress[id]}%"></i></div>
+      <button class="btn primary" onclick="go('lesson','${id}')">${S.progress[id]>=100?'Revisar aula':'Acessar curso'}</button>
+    </div>`).join('');
+  return `<div class="pagehead"><h2>Central de Aprendizagem</h2><p>Cada aula mostra onde a teoria aparece na prática da engenharia.</p></div><div class="grid g2">${cards}</div>`;
+};
+VIEWS.lesson = id=>{
+  const c = COURSES[id]; if(!c) return VIEWS.learn();
+  const l = c.lesson;
+  const ans = k => S.quiz[id+'-'+k];
+  const quiz = l.ex.map((q,i)=>{
+    const a = ans(i);
+    const opts = q.o.map((o,j)=>{
+      let cls='opt'; if(a!==undefined){ if(j===q.c) cls+=' right'; else if(j===a) cls+=' wrong'; }
+      return `<button class="${cls}" ${a!==undefined?'disabled':''} onclick="answer('${id}',${i},${j})">${String.fromCharCode(65+j)}) ${o}</button>`;
+    }).join('');
+    const fb = a!==undefined ? `<div class="fb">${a===q.c?'✔ Correto! ':'✘ Quase lá. '}${q.e}</div>` : '';
+    return `<div class="q"><p>${i+1}. ${q.q}</p>${opts}${fb}</div>`;
+  }).join('');
+  const answered = l.ex.filter((_,i)=>ans(i)!==undefined).length;
+  const done = S.lessons[id];
+  return `${backBtn('Central de Aprendizagem')}
+  <div class="pagehead"><span class="chip">${c.name} · Aula demonstrativa</span><h2 style="margin-top:8px">${l.title}</h2></div>
+  <div class="card lesson-body">
+    <h4>📘 Conteúdo resumido</h4>
+    <ul>${l.resumo.map(r=>`<li>${r}</li>`).join('')}</ul>
+    <div class="formula">${l.formula}</div>
+    <div class="callout"><b>Na prática:</b> ${l.app}</div>
+  </div>
+  <div class="sec"><h3>✏️ Exercícios (${answered}/${l.ex.length})</h3></div>
+  <div class="card">${quiz}
+    <div class="row" style="margin-top:6px">
+      <button class="btn orange" ${done?'disabled':''} onclick="finishLesson('${id}')">${done?'✔ Aula concluída':'Concluir aula'}</button>
+      <button class="btn line" onclick="go('challenges')">Aplicar em um desafio</button>
+    </div>
+  </div>`;
+};
+function answer(id,i,j){
+  S.quiz[id+'-'+i]=j; save(); render(true);
+  toast(j===COURSES[id].lesson.ex[i].c ? 'Resposta correta! 🎉' : 'Veja a explicação abaixo da questão.');
+}
+function finishLesson(id){
+  if(S.lessons[id]) return;
+  S.lessons[id]=true;
+  S.progress[id]=Math.min(100,S.progress[id]+20);
+  save(); render(true);
+  toast('Aula concluída! +20 XP e +20% em '+COURSES[id].name);
+}
+
+/* 3. DESAFIOS */
+VIEWS.challenges = ()=>{
+  const cards = Object.entries(CHALLENGES).map(([id,c])=>{
+    const steps = S.ch[id]||[]; const n = steps.filter(Boolean).length;
+    const joined = S.joined[id];
+    return `<div class="card">
+      <div style="font-size:2rem">${c.emoji}</div>
+      <h3 style="margin-top:8px">${c.title}</h3>
+      <div class="row" style="margin:8px 0"><span class="chip o">${c.level}</span><span class="chip">${c.time}</span><span class="chip o">+${c.passos.length*10+50} XP</span>${joined?`<span class="chip g">${n===c.passos.length?'Concluído':'Em andamento'}</span>`:''}</div>
+      <p><b>Objetivo:</b> ${c.objetivo}</p>
+      <p style="margin-top:8px"><b>Contexto:</b> ${c.contexto}</p>
+      <div style="margin-top:12px"><b style="font-size:.85rem">Conhecimentos utilizados</b><div class="row" style="margin-top:6px;gap:6px">${c.conhecimentos.map(k=>`<span class="chip">${k}</span>`).join('')}</div></div>
+      ${joined?`<div class="bar g" style="margin-top:14px"><i style="width:${n/c.passos.length*100}%"></i></div>`:''}
+      <div class="row" style="margin-top:14px">
+        <button class="btn primary" onclick="${joined?`openChallenge('${id}')`:`join('${id}')`}">${joined?'Continuar desafio':'Participar do desafio'}</button>
+        <button class="btn line sm" onclick="openChallenge('${id}')">Ver detalhes</button>
+      </div></div>`;
+  }).join('');
+  return `<div class="pagehead"><h2>Desafios Práticos</h2><p>Problemas reais da engenharia para você resolver com o que aprende em sala.</p></div><div class="grid g3">${cards}</div>`;
+};
+function join(id){
+  S.joined[id]=true; S.ch[id]=S.ch[id]||CHALLENGES[id].passos.map(()=>false); save();
+  toast('Você entrou no desafio! 🚀'); openChallenge(id); if(cur.v==='challenges'||cur.v==='home') render(true);
+}
+function openChallenge(id){
+  const c = CHALLENGES[id]; const joined = S.joined[id];
+  const steps = S.ch[id]||c.passos.map(()=>false);
+  const n = steps.filter(Boolean).length;
+  const list = c.passos.map((p,i)=>`<div class="check ${steps[i]?'on':''}" ${joined?`onclick="toggleStep('${id}',${i})"`:''}><div class="bx">${steps[i]?'✓':''}</div><div>${p}</div></div>`).join('');
+  const calc = c.calc ? `
+    <h4 style="margin:18px 0 6px">🧮 Calculadora de captação</h4>
+    <p style="font-size:.88rem;color:var(--muted)">Volume (litros) = chuva (mm) × área (m²) × coeficiente de aproveitamento (≈ 0,8 para telhado)</p>
+    <div class="field">
+      <div><label>Área do telhado (m²)</label><input id="ca" type="number" value="200" min="0" oninput="calcRain()"></div>
+      <div><label>Chuva no mês (mm)</label><input id="cp" type="number" value="120" min="0" oninput="calcRain()"></div>
+    </div>
+    <div class="callout" id="cr"></div>` : '';
+  openModal(`
+    <span class="chip o">${c.level} · ${c.time} · até +${c.passos.length*10+50} XP</span>
+    <h3 style="margin-top:8px">${c.emoji} ${c.title}</h3>
+    <p style="color:var(--muted);margin:8px 0"><b>Objetivo:</b> ${c.objetivo}</p>
+    <p style="color:var(--muted)"><b>Contexto:</b> ${c.contexto}</p>
+    <div class="row" style="margin:12px 0;gap:6px">${c.conhecimentos.map(k=>`<span class="chip">${k}</span>`).join('')}</div>
+    <h4 style="margin:14px 0 8px">Etapas ${joined?`(${n}/${c.passos.length})`:''}</h4>
+    ${list}
+    ${joined?'':`<p style="font-size:.85rem;color:var(--muted);margin:6px 0 0">Participe para marcar as etapas concluídas.</p>`}
+    ${calc}
+    <div class="row" style="margin-top:16px">
+      ${joined?`<button class="btn primary" onclick="closeModal()">Salvar e fechar</button>`:`<button class="btn primary" onclick="join('${id}')">Participar do desafio</button>`}
+      <button class="btn line" onclick="closeModal()">Fechar</button>
+    </div>`);
+  if(c.calc) calcRain();
+}
+function calcRain(){
+  const a=+$('#ca').value||0, p=+$('#cp').value||0;
+  const v=Math.round(a*p*0.8);
+  $('#cr').innerHTML=`<b>Volume captado no mês: ${v.toLocaleString('pt-BR')} litros</b> (${(v/1000).toLocaleString('pt-BR',{maximumFractionDigits:1})} m³). Uma cisterna de ${Math.ceil(v/1000/ 5)*5} m³ já guardaria esse volume.`;
+}
+function toggleStep(id,i){
+  const arr = S.ch[id]||CHALLENGES[id].passos.map(()=>false);
+  arr[i]=!arr[i]; S.ch[id]=arr; save();
+  const done = arr.every(Boolean);
+  openChallenge(id);
+  if(done) toast('Desafio concluído! Ele foi adicionado ao seu portfólio. 🏆');
+  if(cur.v==='challenges'||cur.v==='home'||cur.v==='portfolio') render(true);
+}
+
+/* 4. SIMULADOR PROFISSIONAL */
+VIEWS.sim = ()=> sim.choice ? simResult() : simPlay();
+
+function simPlay(){
+  const heardN = Object.keys(sim.heard).length;
+  const chars = Object.entries(CHARS).map(([k,c])=>`
+    <button class="card char ${sim.heard[k]?'heard':''} ${sim.open===k?'sel':''}" onclick="listen('${k}')">
+      <div class="av" style="background:${c.cor}">${c.emoji}</div>
+      <h4>${c.nome}</h4><small>${c.cargo}</small>
+      <p style="margin-top:8px;font-size:.82rem">${sim.heard[k]?'Toque para rever':'Toque para ouvir'}</p>
+    </button>`).join('');
+  let dlg='';
+  if(sim.open){
+    const c=CHARS[sim.open];
+    dlg=`<div class="dialog">
+      <div class="says"><p><b>${c.nome}</b> · ${c.cargo}<br><br>${c.fala}</p></div>
+      <div class="under">💡 ${c.fundo}</div></div>`;
+  }
+  const missing = Object.keys(CHARS).filter(k=>!sim.heard[k]).map(k=>CHARS[k].nome);
+  const alts = Object.entries(ALTS).map(([k,a])=>`
+    <div class="card alt" onclick="chooseAlt('${k}')">
+      <div class="row" style="justify-content:space-between"><div class="letter">${k}</div></div>
+      <h3>${a.titulo}</h3><p>${a.resumo}</p>
+      <ul>${a.pontos.map(p=>`<li>${p}</li>`).join('')}</ul>
+      <button class="btn primary sm" style="margin-top:auto;align-self:flex-start">Escolher esta alternativa</button>
+    </div>`).join('');
+  return `
+  <div class="sim-hero">
+    <span class="alert">⚠ Situação crítica</span> <span class="alert" style="background:#7655D9">⭐ Missão especial · +${SIMXP} XP</span>
+    <h2>Simulador Profissional: “A obra atrasou”</h2>
+    <p>Uma obra está atrasada e diferentes setores precisam chegar a uma solução. Você é o(a) engenheiro(a) coordenador(a) que vai mediar a conversa e tomar a decisão final.</p>
+    <div class="facts">
+      <div class="fact"><b>4 semanas</b><span>de atraso projetado</span></div>
+      <div class="fact"><b>+8%</b><span>acima do orçamento</span></div>
+      <div class="fact"><b>Laje 5º andar</b><span>concretagem parada</span></div>
+      <div class="fact"><b>Cliente</b><span>pressionando</span></div>
+    </div>
+  </div>
+
+  <div class="step"><i>1</i><h3>Ouça os envolvidos</h3></div>
+  <p style="color:var(--muted);margin-bottom:12px">Cada pessoa tem uma visão e um interesse diferentes. Quanto mais você ouvir, melhor será a sua leitura da situação. (${heardN}/4 ouvidos)</p>
+  <div class="grid g4" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">${chars}</div>
+  ${dlg}
+
+  <div class="step"><i>2</i><h3>Escolha uma solução</h3></div>
+  ${missing.length?`<div class="hint">👀 Você ainda não ouviu: <b>${missing.join(', ')}</b>. Ouvir todos influencia a sua nota de <b>Escuta ativa</b> e pode revelar alternativas.</div>`:'<div class="hint" style="background:#e9f9f2;border-color:var(--ok);color:#0f5f42">✔ Você ouviu todos os envolvidos. Hora de decidir!</div>'}
+  <div class="grid g3" style="margin-top:14px">${alts}</div>`;
+}
+function listen(k){ sim.heard[k]=true; sim.open = (sim.open===k && false) ? null : k; render(true); }
+function chooseAlt(k){
+  const a=ALTS[k];
+  openModal(`<h3>Confirmar decisão?</h3>
+    <p style="color:var(--muted);margin:8px 0 14px">Você escolheu a alternativa <b>${k}</b>: <b>${a.titulo}</b>.</p>
+    ${Object.keys(sim.heard).length<4?`<div class="hint" style="margin-bottom:14px">Você ainda não ouviu todos os envolvidos. Isso pode reduzir sua nota de escuta ativa.</div>`:''}
+    <div class="row"><button class="btn primary" onclick="confirmAlt('${k}')">Confirmar e ver resultado</button><button class="btn line" onclick="closeModal()">Voltar e pensar mais</button></div>`);
+}
+function confirmAlt(k){
+  sim.choice=k; closeModal();
+  const sc = scores(k);
+  S.simRuns++;
+  if(!S.bestSim || avg(sc)>avg(S.bestSim)) S.bestSim=sc;
+  save(); render(); window.scrollTo({top:0});
+}
+function scores(k){
+  const a=ALTS[k], h=Object.keys(sim.heard).length, d=h-2;
+  const clamp=n=>Math.max(5,Math.min(100,Math.round(n)));
+  return {com:clamp(a.base.com+d*3), esc:clamp(a.base.esc+d*9), col:clamp(a.base.col+d*2), neg:clamp(a.base.neg+d*3)};
+}
+function simResult(){
+  const k=sim.choice, a=ALTS[k], sc=scores(k), h=Object.keys(sim.heard).length, total=avg(sc);
+  const metrics = Object.entries(a.m).map(([n,v])=>`
+    <div style="margin-bottom:12px"><div class="barlabel"><span>${n}</span><span>${v}/100</span></div><div class="bar ${barc(v)}"><i style="width:${v}%"></i></div></div>`).join('');
+  const skillCards = Object.keys(SKILLS).map(s=>{
+    const [lbl,cl]=lvl(sc[s]);
+    let extra='';
+    if(s==='esc'){
+      extra = h===4 ? `<p class="pos">Você ouviu os 4 envolvidos antes de decidir, e isso mostra interesse genuíno em compreender cada ponto de vista.</p>`
+        : h===0 ? `<p class="imp">Você decidiu sem ouvir ninguém. Na vida real, mesmo 5 minutos de conversa com cada setor mudam a qualidade da decisão.</p>`
+        : `<p class="imp">Você ouviu ${h} de 4 envolvidos. Quem ficou de fora poderia ter trazido uma informação importante.</p>`;
+    }
+    return `<div class="card"><div class="score-card">
+        <div class="ring" style="--p:${sc[s]}"><span>${sc[s]}</span></div>
+        <div><h3>${SKILL_ICON[s]} ${SKILLS[s]}</h3><span class="lvl ${cl}">${lbl}</span></div></div>
+      <div class="fbk"><p class="pos">${a.fb[s][0]}</p><p class="imp">${a.fb[s][1]}</p>${extra}</div></div>`;
+  }).join('');
+  const [tl,tc]=lvl(total);
+  const tip = k==='B' ? 'Você mostrou uma postura colaborativa e transparente: exatamente o que se espera de um(a) profissional que coordena equipes.'
+    : k==='A' ? 'Sua decisão resolveu parte do prazo, mas deixou custos e desgaste. Tente na próxima vez envolver os setores antes de decidir.'
+    : 'A decisão trouxe riscos de confiança e de relacionamento. Tente novamente: ouvir todos e conversar com transparência abre caminhos melhores.';
+  return `
+  ${backBtn('Voltar ao início')}
+  <div class="sim-hero">
+    <span class="alert">Resultado da simulação</span>
+    <h2>Alternativa ${k}: ${a.titulo}</h2>
+    <p>${tip}</p>
+    <div class="row" style="margin-top:14px"><span class="lvl ${tc}" style="font-size:.9rem">Desempenho geral: ${total}/100 · ${tl}</span> <span class="chip o">+${SIMXP} XP · Missão especial</span></div>
+  </div>
+
+  <div class="sec"><h3>📊 Consequências da sua decisão</h3></div>
+  <div class="card"><p style="color:#34456a;margin-bottom:16px;font-size:.96rem">${a.conseq}</p>${metrics}</div>
+
+  <div class="sec"><h3>🎯 Feedback das competências</h3></div>
+  <div class="grid g2">${skillCards}</div>
+
+  <div class="sec"><h3>💬 O que os envolvidos diriam</h3></div>
+  <div class="grid g2">${reactions(k)}</div>
+
+  <div class="row" style="margin-top:26px">
+    <button class="btn orange" onclick="resetSim()">↻ Tentar outra alternativa</button>
+    <button class="btn primary" onclick="go('portfolio')">Ver meu portfólio</button>
+    <button class="btn line" onclick="go('mentors')">Falar com um mentor</button>
+  </div>`;
+}
+function reactions(k){
+  const R = {
+    A:{eng:'“Conseguimos acelerar, mas o novo concreto exige ensaios extras. Eu preferia ter sido consultada antes.”',com:'“O cliente ficou aliviado com o prazo. Só espero que não precisemos repetir isso.”',fin:'“O custo extra de 14% foi pesado. Vamos precisar compensar nos próximos meses.”',for:'“Perdi a obra e fiquei chateado. Eu teria entregado parte do volume.”'},
+    B:{eng:'“Reorganizar a sequência manteve a qualidade e a equipe produtiva. Foi a decisão mais segura.”',com:'“Falei com o cliente com um prazo honesto e ele valorizou. Isso preserva o contrato.”',fin:'“O custo extra ficou pequeno e diluído. Consigo defender isso no fechamento do mês.”',for:'“Fui ouvido e consegui planejar a entrega parcial. Quero continuar sendo parceiro de vocês.”'},
+    C:{eng:'“A equipe está desmotivada e vamos ter retrabalho. Precisamos de um plano real, não de pressão.”',com:'“Quando o cliente descobriu o atraso, a confiança quebrou. Ficou muito difícil recuperar.”',fin:'“A multa não resolveu nada e ainda perdemos um bom fornecedor.”',for:'“Fui tratado como único culpado. Daqui pra frente, outras obras terão prioridade.”'}}[k];
+  return Object.entries(CHARS).map(([ck,c])=>`<div class="card"><div class="row"><div class="av" style="width:42px;height:42px;border-radius:50%;background:${c.cor};display:grid;place-items:center;font-size:1.3rem">${c.emoji}</div><div><b>${c.nome}</b><br><small style="color:var(--muted)">${c.cargo}</small></div></div><p style="margin-top:10px;font-style:italic">${R[ck]}</p></div>`).join('');
+}
+function resetSim(){ sim={heard:{},open:null,choice:null}; render(); window.scrollTo({top:0}); toast('Simulação reiniciada. Boa sorte!'); }
+
+/* 5. MENTORIAS */
+VIEWS.mentors = ()=>{
+  const cards = MENTORS.map(m=>`
+    <div class="card mentor">
+      <div class="av">${m.ini}</div>
+      <h3>${m.nome}</h3>
+      <div class="area">${m.area}</div>
+      <p style="margin-top:6px"><b>Especialidade:</b> ${m.esp}</p>
+      <button class="btn ghost" onclick="openMentor(${m.id})">Visualizar perfil</button>
+    </div>`).join('');
+  return `<div class="pagehead"><h2>Mentorias</h2><p>Perfis fictícios de profissionais para inspirar a sua jornada. Nenhum contato real é feito neste protótipo.</p></div><div class="grid g3">${cards}</div>`;
+};
+function openMentor(id){
+  const m = MENTORS.find(x=>x.id===id), fav=S.favs[id];
+  openModal(`
+    <div class="row"><div class="av" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.3rem">${m.ini}</div>
+      <div><h3 style="padding:0">${m.nome}</h3><span class="chip">${m.area}</span></div></div>
+    <p style="margin:14px 0;color:#34456a">${m.bio}</p>
+    <div class="row" style="gap:20px;margin-bottom:12px"><div class="stat"><b>${m.anos}</b><span>anos de experiência</span></div><div style="flex:1"><b style="font-size:.85rem">Especialidade</b><br>${m.esp}</div></div>
+    <h4 style="margin:12px 0 8px">Temas de conversa</h4>
+    <div class="row" style="gap:6px">${m.temas.map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+    <div class="callout" style="margin-top:16px"><b>Dica do mentor:</b> ${m.dica}</div>
+    <p style="font-size:.8rem;color:var(--muted)">Perfil fictício, criado para demonstração. O Engagement não realiza contato real nesta versão.</p>
+    <div class="row" style="margin-top:14px">
+      <button class="btn ${fav?'line':'primary'}" onclick="favMentor(${m.id})">${fav?'★ Mentor salvo':'☆ Salvar mentor'}</button>
+      <button class="btn line" onclick="closeModal()">Fechar</button>
+    </div>`);
+}
+function favMentor(id){
+  S.favs[id]=!S.favs[id]; save(); openMentor(id);
+  toast(S.favs[id]?'Mentor salvo na sua lista ⭐':'Mentor removido da lista');
+}
+
+/* 6. PORTFÓLIO */
+VIEWS.portfolio = ()=>{
+  const projects = [
+    {t:'Maquete de viga em treliça', d:'Física I · Introdução à Engenharia', s:'Concluído em 03/2026', e:'🌉', demo:true},
+    {t:'Planilha de custos de reforma', d:'Cálculo I · Planejamento', s:'Concluído em 06/2026', e:'📊', demo:true}
+  ];
+  Object.entries(CHALLENGES).forEach(([id,c])=>{
+    const st=S.ch[id]; if(st && st.every(Boolean)) projects.push({t:c.title,d:'Desafio prático Engagement',s:'Concluído agora',e:c.emoji});
+  });
+  if(S.bestSim) projects.push({t:'Simulação: obra atrasada',d:'Comunicação · Negociação · Colaboração',s:'Desempenho '+avg(S.bestSim)+'/100',e:'🏗️'});
+  const certs = [
+    {t:'Introdução à Engenharia', need:'intro'},{t:'Cálculo I', need:'calc'},{t:'Física I', need:'fis'},{t:'Álgebra Linear', need:'alg'}
+  ].map(c=>{
+    const ok = S.progress[c.need]>=100;
+    return `<div class="card cert ${ok?'':'locked'}"><span class="chip ${ok?'g':'o'}">${ok?'Emitido':'Bloqueado'}</span><h3 style="margin-top:8px">${c.t}</h3><p>${ok?'Certificado demonstrativo de conclusão.':`Conclua o curso para liberar (${S.progress[c.need]}%).`}</p>${ok?`<button class="btn ghost sm" style="margin-top:10px" onclick="toast('Certificado demonstrativo — sem validade real')">Ver certificado</button>`:`<button class="btn line sm" style="margin-top:10px" onclick="go('lesson','${c.need}')">Continuar curso</button>`}</div>`;
+  }).join('');
+  const soft = S.bestSim || {com:45,esc:45,col:45,neg:45};
+  const skills = Object.keys(SKILLS).map(s=>`<div style="margin-bottom:12px"><div class="barlabel"><span>${SKILL_ICON[s]} ${SKILLS[s]}</span><span>${soft[s]}</span></div><div class="bar ${S.bestSim?barc(soft[s]):'o'}"><i style="width:${soft[s]}%"></i></div></div>`).join('');
+  const tech = Object.entries(COURSES).map(([id,c])=>`<div style="margin-bottom:12px"><div class="barlabel"><span>${c.emoji} ${c.name}</span><span>${S.progress[id]}%</span></div><div class="bar"><i style="width:${S.progress[id]}%"></i></div></div>`).join('');
+  const hours = Object.entries(COURSES).reduce((a,[id,c])=>a+Math.round(c.hours*S.progress[id]/100),0);
+  return `<div class="pagehead"><h2>Meu Portfólio</h2><p>Ana Beatriz · Engenharia Civil · Dados fictícios de demonstração</p></div>
+  <div class="grid g4">
+    <div class="card stat"><b>${projects.length}</b><span>projetos concluídos</span></div>
+    <div class="card stat"><b>${Object.values(S.progress).filter(p=>p>=100).length}</b><span>certificados emitidos</span></div>
+    <div class="card stat"><b>${hours}h</b><span>de estudo registradas</span></div>
+    <div class="card stat"><b>${S.bestSim?avg(S.bestSim):'—'}</b><span>nota no simulador</span></div>
+  </div>
+
+  <div class="sec"><h3>📁 Projetos concluídos</h3><a onclick="go('challenges')">Novos desafios →</a></div>
+  <div class="grid g3">${projects.map(p=>`<div class="card"><div style="font-size:1.8rem">${p.e}</div><h3 style="margin-top:6px">${p.t}</h3><p>${p.d}</p><div class="row" style="margin-top:10px"><span class="chip g">${p.s}</span>${p.demo?'':'<span class="chip o">novo</span>'}</div></div>`).join('')}</div>
+
+  <div class="sec"><h3>🎓 Certificados</h3></div>
+  <div class="grid g4" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${certs}</div>
+
+  <div class="sec"><h3>🧠 Competências desenvolvidas</h3></div>
+  <div class="grid g2">
+    <div class="card"><h3>Competências profissionais</h3>${skills}${S.bestSim?'':'<div class="hint">Jogue o Simulador Profissional para medir essas competências.</div><button class="btn orange sm" style="margin-top:12px" onclick="go(\'sim\')">Ir ao simulador</button>'}</div>
+    <div class="card"><h3>Conhecimento técnico</h3>${tech}</div>
+  </div>`;
+};
+
+/* =========================================================
+   v2 — PLATAFORMA DE PREVENÇÃO À EVASÃO
+   ========================================================= */
+
+/* ---------- Pontos, níveis e utilitários de quiz ---------- */
+const LEVELS=[[0,'Calouro'],[100,'Explorador'],[250,'Aprendiz de Engenheiro'],[450,'Projetista'],[700,'Engenheiro em Formação'],[1000,'Mestre dos Desafios']];
+function level(p){
+  let i=0; LEVELS.forEach((l,k)=>{ if(p>=l[0]) i=k; });
+  const nx=LEVELS[i+1];
+  return {n:i+1,name:LEVELS[i][1],from:LEVELS[i][0],next:nx?nx[0]:null,nextName:nx?nx[1]:null};
+}
+function points(){
+  let p=120; // pontos iniciais demonstrativos
+  p+=Object.keys(S.lessons).length*50;
+  Object.entries(S.quiz).forEach(([k,v])=>{ const [id,i]=k.split('-'); if(COURSES[id]&&COURSES[id].lesson.ex[i]&&COURSES[id].lesson.ex[i].c===v) p+=10; });
+  Object.entries(S.esq).forEach(([k,v])=>{ const [id,i]=k.split('-'); if(ESQ[id]&&ESQ[id].q[i]&&ESQ[id].q[i].c===v) p+=10; });
+  Object.entries(S.mq).forEach(([k,v])=>{ const [id,i]=k.split('-'); const m=MIS.find(x=>x.id===id); if(m&&m.q[i]&&m.q[i].c===v) p+=15; });
+  p+=Object.keys(S.missions).filter(k=>S.missions[k]).length*30;
+  Object.values(S.ch).forEach(a=>{ p+=a.filter(Boolean).length*20; });
+  p+=S.simRuns*20;
+  return p;
+}
+function quizHTML(qs,store,pre,fn,pts){
+  return qs.map((q,i)=>{
+    const a=store[pre+'-'+i];
+    const opts=q.o.map((o,j)=>{
+      let cls='opt'; if(a!==undefined){ if(j===q.c) cls+=' right'; else if(j===a) cls+=' wrong'; }
+      return `<button class="${cls}" ${a!==undefined?'disabled':''} onclick="${fn}('${pre}',${i},${j})">${String.fromCharCode(65+j)}) ${o}</button>`;
+    }).join('');
+    const fb=a!==undefined?`<div class="fb">${a===q.c?'✔ Correto! +'+pts+' XP. ':'✘ Não foi dessa vez (0 ponto). '}${q.e}</div>`:'';
+    return `<div class="q"><p>${i+1}. ${q.q}</p>${opts}${fb}</div>`;
+  }).join('');
+}
+
+/* ---------- ESQUENTA ENGENHARIA (gratuito: Ensino Médio e recém-aprovados) ---------- */
+const ESQ={
+  mat:{name:'Matemática básica',emoji:'➗',desc:`Frações, porcentagem, equações e funções: a base para Cálculo I.`,
+    q:[
+      {q:`Quanto é 3/4 + 1/2?`,o:['4/6','5/4','1','3/8'],c:1,e:`3/4 + 2/4 = 5/4 (ou 1,25).`},
+      {q:`Uma obra de R$ 20.000 teve aumento de 15%. Qual é o novo valor?`,o:['R$ 21.500','R$ 23.000','R$ 22.000','R$ 23.500'],c:1,e:`15% de 20.000 = 3.000, então o novo valor é 23.000.`},
+      {q:`Resolva: 2x + 6 = 20. Qual o valor de x?`,o:['5','7','10','13'],c:1,e:`2x = 14, logo x = 7.`},
+      {q:`Se f(x) = 3x − 2, quanto vale f(4)?`,o:['10','12','14','8'],c:0,e:`3·4 − 2 = 10.`}]},
+  fis:{name:'Física básica',emoji:'🚀',desc:`Unidades, velocidade, aceleração e força: o ponto de partida para Física I.`,
+    q:[
+      {q:`Um carro percorre 120 km em 2 h. Qual a velocidade média?`,o:['40 km/h','60 km/h','80 km/h','240 km/h'],c:1,e:`v = Δs/Δt = 120/2 = 60 km/h.`},
+      {q:`Qual a unidade de força no Sistema Internacional?`,o:['Joule','Watt','Newton','Pascal'],c:2,e:`A força é medida em newtons (N), sendo 1 N = 1 kg·m/s².`},
+      {q:`Quantos m/s correspondem a 72 km/h?`,o:['10 m/s','20 m/s','25 m/s','72 m/s'],c:1,e:`Divide-se por 3,6: 72 / 3,6 = 20 m/s.`},
+      {q:`Um objeto de 4 kg recebe uma força de 20 N. Qual a aceleração?`,o:['5 m/s²','80 m/s²','16 m/s²','0,2 m/s²'],c:0,e:`a = F/m = 20/4 = 5 m/s².`}]},
+  log:{name:'Raciocínio lógico',emoji:'🧩',desc:`Sequências, padrões e proporção: treino para resolver problemas com método.`,
+    q:[
+      {q:`Qual o próximo número da sequência 2, 6, 18, 54, …?`,o:['108','162','72','216'],c:1,e:`Cada termo é multiplicado por 3: 54 · 3 = 162.`},
+      {q:`Se 3 máquinas fazem um trabalho em 12 h, 6 máquinas iguais fazem em…`,o:['24 h','6 h','4 h','9 h'],c:1,e:`Dobrando as máquinas, o tempo cai pela metade: 6 h.`},
+      {q:`Todos os integrantes do grupo sabem calcular. Marta está no grupo. Logo…`,o:['Marta sabe calcular','Marta não sabe calcular','Marta é engenheira de obras','Nada se conclui'],c:0,e:`Se todos do grupo sabem calcular e Marta pertence ao grupo, ela sabe calcular.`},
+      {q:`Um tanque enche em 5 h e outro em 20 h. Juntos, enchem em…`,o:['12,5 h','4 h','10 h','25 h'],c:1,e:`1/5 + 1/20 = 5/20 = 1/4, ou seja, 4 horas.`}]}
+};
+function esqStats(id){
+  const t=ESQ[id]; let a=0,r=0;
+  t.q.forEach((q,i)=>{ const v=S.esq[id+'-'+i]; if(v!==undefined){ a++; if(v===q.c) r++; } });
+  return {a,r,n:t.q.length};
+}
+VIEWS.esq=()=>{
+  const ids=Object.keys(ESQ); let n=0,a=0,r=0;
+  ids.forEach(i=>{ const s=esqStats(i); n+=s.n; a+=s.a; r+=s.r; });
+  const pct=Math.round(a/n*100), acc=a?Math.round(r/a*100):0, ready=(a===n&&acc>=75);
+  const cards=ids.map(id=>{
+    const t=ESQ[id], s=esqStats(id), done=s.a===s.n;
+    const stars=done?(s.r===s.n?'⭐⭐⭐':s.r>=s.n-1?'⭐⭐':'⭐'):'';
+    return `<div class="card course"><div class="ico">${t.emoji}</div><h3>${t.name}</h3><p>${t.desc}</p>
+      <div class="meta"><span>${s.a}/${s.n} atividades</span><span>${s.r*10} / ${s.n*10} XP ${stars}</span></div>
+      <div class="bar ${done?'g':''}"><i style="width:${s.a/s.n*100}%"></i></div>
+      <button class="btn primary" onclick="go('esqtrail','${id}')">${done?'Revisar trilha':s.a?'Continuar trilha':'Começar trilha'}</button></div>`;
+  }).join('');
+  return `<div class="hero">
+      <div class="eyebrow">Fase 0 · Preparação</div>
+      <h2>Esquenta Engenharia</h2>
+      <p>Área <b>gratuita</b> para estudantes do Ensino Médio e recém-aprovados. Revise Matemática básica, Física e raciocínio lógico com atividades gamificadas antes das primeiras aulas da faculdade.</p>
+      <div class="row" style="position:relative;z-index:1;margin-top:14px"><span class="chip g">Gratuito</span><span class="chip">Sem cadastro</span><span class="chip o">+10 XP por acerto</span></div>
+    </div>
+    <div class="sec"><h3>Seu nivelamento</h3></div>
+    <div class="card"><div class="row" style="gap:22px">
+      <div class="ring" style="--p:${pct}"><span>${pct}%</span></div>
+      <div style="flex:1;min-width:200px"><h3>${ready?'Pronto para Engenharia 🚀':a===0?'Comece por qualquer trilha':'Esquentando os motores…'}</h3>
+      <p>${a===0?'Escolha uma trilha abaixo. Cada atividade respondida atualiza seu progresso e seus pontos.':`Você respondeu ${a} de ${n} atividades, com ${acc}% de acertos. ${ready?'Ótimo preparo para o 1º semestre!':'Continue para completar o nivelamento.'}`}</p></div>
+      <button class="btn orange" onclick="go('journey')">Ver minha jornada</button></div></div>
+    <div class="sec"><h3>Trilhas de nivelamento</h3></div>
+    <div class="grid g3">${cards}</div>`;
+};
+VIEWS.esqtrail=id=>{
+  const t=ESQ[id]; if(!t) return VIEWS.esq();
+  const s=esqStats(id), done=s.a===s.n;
+  const ids=Object.keys(ESQ), nx=ids[(ids.indexOf(id)+1)%ids.length];
+  const stars=s.r===s.n?'⭐⭐⭐':s.r>=s.n-1?'⭐⭐':'⭐';
+  const result=done?`<div class="card" style="margin-top:16px;text-align:center"><div style="font-size:2.2rem">${stars}</div><h3>Trilha concluída!</h3>
+    <p>Você acertou ${s.r} de ${s.n} e somou ${s.r*10} XP.${s.r<s.n?' Releia as explicações para fixar o que faltou.':' Desempenho perfeito!'}</p>
+    <div class="row" style="justify-content:center;margin-top:12px"><button class="btn primary" onclick="go('esqtrail','${nx}')">Próxima trilha</button><button class="btn line" onclick="go('esq')">Voltar ao Esquenta</button></div></div>`:'';
+  return `${backBtn('Esquenta Engenharia')}
+    <div class="pagehead"><span class="chip">Trilha gratuita</span><h2 style="margin-top:8px">${t.emoji} ${t.name}</h2><p>${t.desc} Cada acerto vale 10 XP.</p></div>
+    <div class="card"><div class="barlabel"><span>Progresso</span><span>${s.a}/${s.n}</span></div><div class="bar"><i style="width:${s.a/s.n*100}%"></i></div></div>
+    <div class="sec"><h3>Atividades</h3></div>
+    <div class="card">${quizHTML(t.q,S.esq,id,'ansEsq',10)}</div>${result}`;
+};
+function ansEsq(id,i,j){
+  S.esq[id+'-'+i]=j; save(); render(true);
+  toast(j===ESQ[id].q[i].c?'+10 XP! 🎉':'Veja a explicação abaixo.');
+  if(esqStats(id).a===ESQ[id].q.length) setTimeout(()=>toast('Trilha concluída! Veja seu resultado no fim da página. 🏅'),1900);
+}
+
+/* ---------- MISSÕES SINCRONIZADAS COM AS DISCIPLINAS ---------- */
+const MIS=[
+ {id:'m1',sem:1,disc:'calc',title:`Derivadas na velocidade e na aceleração`,
+  ctx:`Um elevador de obra sobe com posição s(t) = t³ − 6t² + 9t (em metros, com t em segundos).`,
+  cont:[`Velocidade é a derivada da posição: v(t) = s′(t).`,`Aceleração é a derivada da velocidade: a(t) = v′(t).`,`Quando v(t) = 0, o elevador para por um instante: é um ponto crítico da posição.`],
+  formula:`s(t) = t³ − 6t² + 9t  →  v(t) = 3t² − 12t + 9  →  a(t) = 6t − 12`,
+  app:`Engenheiros usam a aceleração para limitar esforços dinâmicos em cabos de elevadores, guindastes e trens. Acelerações bruscas aumentam as cargas e o desconforto.`,
+  q:[{q:`Qual a velocidade do elevador em t = 2 s?`,o:['−3 m/s','3 m/s','0 m/s','9 m/s'],c:0,e:`v(2) = 3·4 − 12·2 + 9 = −3 m/s (o sinal negativo indica que o elevador está descendo).`},
+     {q:`Qual a aceleração em t = 3 s?`,o:['6 m/s²','−6 m/s²','12 m/s²','0 m/s²'],c:0,e:`a(3) = 6·3 − 12 = 6 m/s².`}]},
+ {id:'m2',sem:2,disc:'calc',title:`Otimização: menos material em um reservatório`,
+  ctx:`Uma caixa d'água aberta tem base quadrada de lado x (m) e volume de 32 m³. O material gasto é A(x) = x² + 128/x.`,
+  cont:[`Para minimizar o material, derive A(x) e iguale a zero.`,`A′(x) = 2x − 128/x² = 0  →  x³ = 64  →  x = 4 m.`,`A segunda derivada positiva confirma que é um ponto de mínimo.`],
+  formula:`A′(x) = 0  →  ponto crítico (mínimo de material)`,
+  app:`A otimização reduz custo de material e peso em reservatórios, embalagens e peças. É uma decisão direta de custo no projeto.`,
+  q:[{q:`Qual o lado x que minimiza o material?`,o:['2 m','4 m','8 m','16 m'],c:1,e:`x³ = 64, portanto x = 4 m.`},
+     {q:`Com x = 4 m, qual a altura h = 32 / x²?`,o:['1 m','2 m','4 m','8 m'],c:1,e:`h = 32/16 = 2 m.`}]},
+ {id:'m3',sem:3,disc:'fis',title:`Tração no cabo de um guindaste`,
+  ctx:`Um guindaste ergue uma carga de 500 kg. Considere g = 10 m/s².`,
+  cont:[`Parada ou em velocidade constante, a tração equilibra o peso: T = m·g.`,`Subindo com aceleração a, a 2ª Lei dá T − m·g = m·a, logo T = m(g + a).`,`Cabos são dimensionados para a pior situação, não só para a carga parada.`],
+  formula:`T = m · (g + a)`,
+  app:`O cabo precisa suportar mais do que o peso da carga quando ela acelera para cima. Por isso existe o coeficiente de segurança nos projetos.`,
+  q:[{q:`Qual a tração com a carga parada?`,o:['500 N','5.000 N','6.000 N','50 N'],c:1,e:`T = m·g = 500 · 10 = 5.000 N.`},
+     {q:`Qual a tração se a carga sobe com a = 2 m/s²?`,o:['5.000 N','4.000 N','6.000 N','1.000 N'],c:2,e:`T = 500 · (10 + 2) = 6.000 N.`}]},
+ {id:'m4',sem:4,disc:'fis',title:`Energia: queda de uma ferramenta no canteiro`,
+  ctx:`Uma ferramenta de 2 kg cai de um andaime a 5 m do chão (g = 10 m/s², sem atrito do ar).`,
+  cont:[`Energia potencial: Ep = m·g·h.`,`Na queda, Ep se converte em energia cinética: m·g·h = ½·m·v².`,`Logo v = √(2·g·h), independente da massa.`],
+  formula:`v = √(2 · g · h)`,
+  app:`Cálculos de energia ajudam a definir áreas de isolamento, redes de proteção e capacetes obrigatórios em obras.`,
+  q:[{q:`Com que velocidade a ferramenta chega ao chão?`,o:['5 m/s','10 m/s','50 m/s','100 m/s'],c:1,e:`v = √(2·10·5) = √100 = 10 m/s.`},
+     {q:`Qual a energia potencial inicial?`,o:['10 J','50 J','100 J','200 J'],c:2,e:`Ep = 2 · 10 · 5 = 100 J.`}]},
+ {id:'m5',sem:5,disc:'alg',title:`Sistema linear em uma treliça`,
+  ctx:`Em um nó de uma treliça, as forças nas barras satisfazem F1 + F2 = 10 kN e F1 − F2 = 2 kN.`,
+  cont:[`Cada nó em equilíbrio gera equações lineares.`,`Somando as duas equações: 2·F1 = 12, logo F1 = 6 kN.`,`Substituindo: F2 = 10 − 6 = 4 kN.`],
+  formula:`A·x = b   com A = [[1, 1],[1, −1]]  e  b = [10, 2]`,
+  app:`Programas de cálculo estrutural resolvem sistemas com milhares de equações desse tipo para obter a força em cada barra.`,
+  q:[{q:`Qual o valor de F1?`,o:['4 kN','6 kN','8 kN','12 kN'],c:1,e:`F1 = 6 kN (soma das equações dividida por 2).`},
+     {q:`Qual o determinante de A = [[1, 1],[1, −1]]?`,o:['−2','0','1','2'],c:0,e:`det = 1·(−1) − 1·1 = −2. Como é diferente de zero, a solução é única.`}]},
+ {id:'m6',sem:6,disc:'alg',title:`Matrizes no orçamento de materiais`,
+  ctx:`Orçamento: 10 sacos de cimento a R$ 40 e 4 caixas de argamassa a R$ 25.`,
+  cont:[`Custo total = quantidades × preços (produto de vetores/matrizes).`,`[10  4] · [40  25]ᵀ = 10·40 + 4·25 = 500.`,`Planilhas e softwares fazem esse produto com centenas de itens ao mesmo tempo.`],
+  formula:`custo = q · p = [10  4] · [40  25]ᵀ`,
+  app:`Orçamentos e quantitativos de obra são, na prática, multiplicações de matrizes feitas em planilhas.`,
+  q:[{q:`Qual o custo total?`,o:['R$ 440','R$ 500','R$ 540','R$ 650'],c:1,e:`10·40 + 4·25 = 400 + 100 = R$ 500.`},
+     {q:`Se o cimento subir para R$ 45, o novo custo é…`,o:['R$ 520','R$ 550','R$ 575','R$ 600'],c:1,e:`10·45 + 4·25 = 450 + 100 = R$ 550.`}]},
+ {id:'m7',sem:7,disc:'calc',title:`Integral: volume de água captado`,
+  ctx:`A vazão de água de uma calha é Q(t) = 2t litros/min, de t = 0 a t = 10 min.`,
+  cont:[`A integral acumula uma taxa ao longo do tempo: volume = ∫ Q(t) dt.`,`∫ 2t dt = t² (+ C).`,`De 0 a 10: 10² − 0² = 100 litros.`],
+  formula:`V = ∫₀¹⁰ 2t dt = [t²]₀¹⁰ = 100 L`,
+  app:`Integrais calculam volume captado, carga distribuída em vigas e trabalho de forças variáveis.`,
+  q:[{q:`Qual o volume captado em 10 min?`,o:['20 L','50 L','100 L','200 L'],c:2,e:`V = 10² = 100 litros.`},
+     {q:`Qual o volume captado nos primeiros 5 min?`,o:['10 L','25 L','50 L','5 L'],c:1,e:`V = 5² = 25 litros.`}]},
+ {id:'m8',sem:8,disc:'fis',title:`Distância de frenagem de um caminhão`,
+  ctx:`Um caminhão a 72 km/h (20 m/s) freia com desaceleração constante de 5 m/s².`,
+  cont:[`No movimento uniformemente variado: v² = v₀² + 2·a·Δs.`,`Parando (v = 0): Δs = v₀² / (2·|a|).`,`A distância de frenagem cresce com o quadrado da velocidade.`],
+  formula:`Δs = v₀² / (2 · |a|)`,
+  app:`Projetos de rodovias, pátios de obra e áreas de manobra definem distâncias de segurança com essa relação.`,
+  q:[{q:`Qual a distância de frenagem?`,o:['20 m','40 m','80 m','100 m'],c:1,e:`Δs = 20² / (2·5) = 400/10 = 40 m.`},
+     {q:`Se a velocidade dobrar (40 m/s), a distância será…`,o:['80 m','120 m','160 m','200 m'],c:2,e:`Δs = 1600/10 = 160 m: dobrar a velocidade quadruplica a distância.`}]}
+];
+const misDone=()=>MIS.filter(m=>S.missions[m.id]).length;
+const misNeed=()=>Math.ceil(MIS.length*0.8);
+function misStats(m){
+  let a=0,r=0; m.q.forEach((q,i)=>{ const v=S.mq[m.id+'-'+i]; if(v!==undefined){ a++; if(v===q.c) r++; } });
+  return {a,r,n:m.q.length,pts:r*20+(S.missions[m.id]?35:0)};
+}
+VIEWS.missions=()=>{
+  const d=misDone(), pct=Math.round(d/MIS.length*100), P=points(), L=level(P);
+  const cards=MIS.map(m=>{
+    const s=misStats(m), done=S.missions[m.id];
+    return `<div class="card course"><div class="row" style="justify-content:space-between"><span class="chip o">Semana ${m.sem}</span><span class="chip">${COURSES[m.disc].name}</span></div>
+      <h3 style="margin-top:10px">${m.title}</h3><p>${m.app.slice(0,92)}…</p>
+      <div class="meta"><span>${done?'✔ Concluída':s.a?'Em andamento':'Não iniciada'}</span><span>${s.pts} XP</span></div>
+      <div class="bar ${done?'g':''}"><i style="width:${done?100:s.a/s.n*100}%"></i></div>
+      <button class="btn ${done?'line':'primary'}" onclick="go('mission','${m.id}')">${done?'Revisar missão':s.a?'Continuar missão':'Começar missão'}</button></div>`;
+  }).join('');
+  return `<div class="pagehead"><h2>Missões sincronizadas</h2><p>Uma missão por semana, ligada ao que você vê em Cálculo, Física e Álgebra, sempre mostrando onde o conteúdo é usado na prática.</p></div>
+  <div class="card"><div class="row" style="gap:22px">
+    <div class="ring" style="--p:${pct}"><span>${pct}%</span></div>
+    <div style="flex:1;min-width:220px"><h3>${d} de ${MIS.length} missões concluídas</h3>
+      <p>Meta para o certificado demonstrativo: <b>80% das missões</b> (${misNeed()} de ${MIS.length}), sujeito à validação institucional.</p>
+      <div class="meter"><div class="fill ${pct>=80?'ok':''}" style="width:${pct}%"></div><div class="mk"></div></div></div>
+    <div class="stat"><b>${P}</b><span>XP · Nível ${L.n}<br>${L.name}</span></div></div></div>
+  <div class="sec"><h3>Missões da jornada · 2º semestre</h3><a onclick="go('rank')">Ver conquistas →</a></div>
+  <div class="grid g3">${cards}</div>`;
+};
+VIEWS.mission=id=>{
+  const m=MIS.find(x=>x.id===id); if(!m) return VIEWS.missions();
+  const s=misStats(m), done=S.missions[id], all=s.a===s.n;
+  return `${backBtn('Missões')}
+  <div class="pagehead"><div class="row"><span class="chip o">Semana ${m.sem}</span><span class="chip">${COURSES[m.disc].name}</span>${done?'<span class="chip g">Concluída</span>':''}</div>
+    <h2 style="margin-top:8px">${m.title}</h2></div>
+  <div class="card lesson-body">
+    <h4>🎬 Situação</h4><p style="color:#34456a">${m.ctx}</p>
+    <h4>📘 Conteúdo da disciplina</h4><ul>${m.cont.map(c=>`<li>${c}</li>`).join('')}</ul>
+    <div class="formula">${m.formula}</div>
+    <div class="callout"><b>Na prática:</b> ${m.app}</div>
+  </div>
+  <div class="sec"><h3>✏️ Resolva (${s.a}/${s.n})</h3></div>
+  <div class="card">${quizHTML(m.q,S.mq,m.id,'ansMis',20)}
+    <div class="row" style="margin-top:6px">
+      <button class="btn orange" ${done||!all?'disabled':''} onclick="finishMis('${m.id}')">${done?'✔ Missão concluída (+35 XP)':'Concluir missão (+35 XP)'}</button>
+      <button class="btn line" onclick="go('missions')">Todas as missões</button>
+    </div>
+    ${!all&&!done?'<p style="font-size:.82rem;margin-top:10px">Responda todas as questões para liberar a conclusão da missão.</p>':''}
+  </div>`;
+};
+function ansMis(id,i,j){
+  S.mq[id+'-'+i]=j; save(); render(true);
+  toast(j===MIS.find(m=>m.id===id).q[i].c?'+20 XP! 🎉':'Veja a explicação abaixo.');
+}
+function finishMis(id){
+  if(S.missions[id]) return;
+  S.missions[id]=true; save(); render(true);
+  const d=misDone();
+  toast(d===misNeed()?'🎓 Você atingiu 80% das missões! Certificado demonstrativo disponível (sujeito à validação institucional).':'Missão concluída! +35 XP 🏅');
+}
+
+/* ---------- MINHA JORNADA ---------- */
+const JOURNEY=[
+ {f:0,t:`Fase 0 · Preparação para a faculdade`,sub:`Ensino Médio e recém-aprovados`,
+  disc:['Matemática básica','Física básica','Raciocínio lógico'],
+  obj:[`Revisar a base necessária para Cálculo I e Física I`,`Perder o medo das primeiras disciplinas`,`Conhecer como será a rotina no curso`],
+  mis:[`Concluir as 3 trilhas do Esquenta Engenharia`,`Alcançar 75% de acertos no nivelamento`,`Conhecer o ciclo de um projeto de engenharia`],cta:['esq','Abrir o Esquenta Engenharia']},
+ {f:1,t:`Fase 1 · Primeiro semestre`,sub:`Adaptação e base científica`,
+  disc:['Cálculo I','Física I','Introdução à Engenharia','Desenho Técnico'],
+  obj:[`Consolidar a base de Cálculo e Física`,`Entender o papel do engenheiro`,`Criar vínculo com a turma e com o curso`],
+  mis:[`Derivadas na prática`,`Leis de Newton em estruturas`,`Primeiro mini-projeto em equipe`],cta:['learn','Abrir a Central de Aprendizagem']},
+ {f:2,t:`Fase 2 · Segundo semestre`,sub:`Aplicação matemática e física`,
+  disc:['Cálculo II','Álgebra Linear','Física II','Programação'],
+  obj:[`Aplicar derivadas e integrais a problemas reais`,`Usar matrizes e sistemas lineares em estruturas`,`Desenvolver comunicação e trabalho em equipe`],
+  mis:null,cta:['missions','Ir para as missões da semana']},
+ {f:3,t:`Fase 3 · Terceiro semestre`,sub:`Fundamentos de engenharia`,
+  disc:['Equações Diferenciais','Estatística','Resistência dos Materiais','Física III'],
+  obj:[`Modelar fenômenos com equações diferenciais`,`Analisar dados de ensaios e obras`,`Escolher a área de interesse na engenharia`],
+  mis:[`Modelagem de uma viga`,`Análise estatística de ensaios`,`Desafio patrocinado por empresa parceira`],cta:null},
+ {f:4,t:`Fase 4 · Quarto semestre`,sub:`Integração com o mercado`,
+  disc:['Métodos Numéricos','Mecânica dos Fluidos','Eletricidade Aplicada','Gestão de Projetos'],
+  obj:[`Resolver problemas com métodos numéricos`,`Conhecer a prática profissional por meio de mentorias`,`Montar um portfólio para estágios`],
+  mis:[`Projeto integrador com empresa parceira`,`Mentoria com profissional da área`,`Apresentação final do portfólio`],cta:null}
+];
+const phaseState=f=>f===0?'open':f===1?'done':f===2?'cur':'lock';
+function phaseProg(f){
+  if(f===0){ let n=0,a=0; Object.keys(ESQ).forEach(i=>{ const s=esqStats(i); n+=s.n; a+=s.a; }); return Math.round(a/n*100); }
+  if(f===1) return 100;
+  if(f===2) return Math.round(misDone()/MIS.length*100);
+  return 0;
+}
+VIEWS.journey=()=>{
+  const stepper=`<div class="stepper">`+JOURNEY.map(j=>{ const st=phaseState(j.f); return `<div class="stp ${st}"><i>${st==='done'?'✓':st==='lock'?'🔒':j.f}</i><span>${j.f===0?'Preparação':j.f+'º semestre'}</span></div>`; }).join('')+`</div>`;
+  const labels={open:['Gratuita','b'],done:['Concluída (demo)','g'],cur:['Em andamento','o'],lock:['Bloqueada','']};
+  const phases=JOURNEY.map(j=>{
+    const st=phaseState(j.f), pr=phaseProg(j.f), lb=labels[st];
+    const mis=j.mis?j.mis.map(x=>`<li>${x}</li>`).join(''):MIS.map(m=>`<li>${S.missions[m.id]?'✔':'○'} Semana ${m.sem}: <a style="color:var(--blue);cursor:pointer;font-weight:600" onclick="go('mission','${m.id}')">${m.title}</a></li>`).join('');
+    const btn=j.cta?`<button class="btn primary sm" style="margin-top:14px" onclick="go('${j.cta[0]}')">${j.cta[1]}</button>`:`<button class="btn line sm" style="margin-top:14px" onclick="lockedPhase(${j.f})">Como liberar esta fase</button>`;
+    return `<details class="ph" ${j.f===2?'open':''}><summary><div class="num">${j.f}</div>
+      <div style="flex:1"><h3 style="font-size:1.05rem">${j.t}</h3><p style="font-size:.85rem;color:var(--muted)">${j.sub}</p>
+      <div class="bar ${st==='done'?'g':''}" style="margin-top:8px"><i style="width:${pr}%"></i></div></div>
+      <span class="chip ${lb[1]==='o'?'o':lb[1]==='g'?'g':''}">${lb[0]}</span></summary>
+      <div class="body"><h4>📚 Disciplinas</h4><div class="row" style="gap:6px">${j.disc.map(d=>`<span class="chip">${d}</span>`).join('')}</div>
+      <h4>🎯 Objetivos da etapa</h4><ul>${j.obj.map(o=>`<li>${o}</li>`).join('')}</ul>
+      <h4>🚩 Missões</h4><ul>${mis}</ul>${btn}</div></details>`;
+  }).join('');
+  return `<div class="pagehead"><h2>Minha Jornada</h2><p>Do preparo para a faculdade até o 4º semestre: cada etapa tem disciplinas, missões e objetivos. Você está na <b>Fase 2</b>.</p></div>${stepper}${phases}`;
+};
+function lockedPhase(f){
+  openModal(`<h3>🔒 Fase ${f} bloqueada</h3><p style="color:var(--muted);margin:10px 0">Esta etapa abre quando você concluir pelo menos <b>80% das missões da fase anterior</b>. Isso garante que a base esteja firme antes do próximo passo.</p>
+    <div class="callout">Você está com ${Math.round(misDone()/MIS.length*100)}% na Fase 2. Faltam ${Math.max(0,misNeed()-misDone())} missão(ões) para liberar a próxima fase.</div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" onclick="go('missions')">Ir para as missões</button><button class="btn line" onclick="closeModal()">Fechar</button></div>`);
+}
+
+/* ---------- GAMIFICAÇÃO: pontos, medalhas, ligas e ranking ---------- */
+const LEAGUE_NAMES={1:'Liga Calouros',2:'Liga Exploradores',3:'Liga Construtores',4:'Liga Projetistas'};
+const LEAGUES={
+ 1:[['Lucas Ferreira',410],['Camila Rocha',385],['Davi Monteiro',350],['Sofia Lacerda',312],['Enzo Barbosa',270],['Marcela Dias',233],['Pietro Alves',190]],
+ 2:[['Rafaela Moura',560],['Isabela Duarte',520],['Pedro Lacerda',455],['Beatriz Salles',380],['Gustavo Pinto',300],['Letícia Mendes',210]],
+ 3:[['Larissa Campos',690],['Matheus Oliveira',640],['Nicole Santana',585],['Caio Ribeiro',520],['Yasmin Freitas',430],['Otávio Lima',350]],
+ 4:[['Júlia Andrade',910],['Fernando Costa',860],['Helena Barros',800],['Rodrigo Maia',735],['Carolina Vieira',650],['André Moreira',560]]
+};
+function badges(){
+  const hasCh=Object.values(S.ch).some(a=>a.length&&a.every(Boolean));
+  const dm=d=>MIS.some(m=>m.disc===d&&S.missions[m.id]);
+  const esqDone=id=>esqStats(id).a===ESQ[id].q.length;
+  return [
+   {e:'🥇',n:'Primeiro passo',d:'Conclua uma aula na Central de Aprendizagem',ok:Object.keys(S.lessons).length>0},
+   {e:'🔥',n:'Motores aquecidos',d:'Conclua uma trilha do Esquenta Engenharia',ok:Object.keys(ESQ).some(esqDone)},
+   {e:'🧩',n:'Mente lógica',d:'Conclua a trilha de Raciocínio lógico',ok:esqDone('log')},
+   {e:'🎯',n:'Missão cumprida',d:'Conclua sua primeira missão',ok:misDone()>0},
+   {e:'📈',n:'Cálculo em ação',d:'Conclua uma missão de Cálculo',ok:dm('calc')},
+   {e:'⚙️',n:'Física na prática',d:'Conclua uma missão de Física',ok:dm('fis')},
+   {e:'🧮',n:'Álgebra aplicada',d:'Conclua uma missão de Álgebra',ok:dm('alg')},
+   {e:'🤝',n:'Bom negociador',d:'Alcance 80 ou mais no Simulador Profissional',ok:!!S.bestSim&&avg(S.bestSim)>=80},
+   {e:'🏗️',n:'Construtor',d:'Conclua um desafio prático',ok:hasCh},
+   {e:'⭐',n:'Mentorado',d:'Salve um mentor',ok:Object.values(S.favs).some(Boolean)},
+   {e:'🎓',n:'Meta dos 80%',d:'Conclua 80% das missões',ok:misDone()>=misNeed()}
+  ];
+}
+VIEWS.rank=()=>{
+  const P=points(), L=level(P), B=badges(), nOk=B.filter(b=>b.ok).length;
+  const d=misDone(), pct=Math.round(d/MIS.length*100), elig=d>=misNeed();
+  const lp=L.next?Math.round((P-L.from)/(L.next-L.from)*100):100;
+  const tabs=[1,2,3,4].map(k=>`<button class="tab ${leagueSel===k?'on':''}" onclick="setLeague(${k})">${k}º semestre</button>`).join('');
+  let list=LEAGUES[leagueSel].map(x=>({n:x[0],p:x[1],me:false}));
+  if(leagueSel===2) list.push({n:'Ana Beatriz (você)',p:P,me:true});
+  list.sort((a,b)=>b.p-a.p);
+  const medal=['🥇','🥈','🥉'];
+  const rows=list.map((x,i)=>`<div class="rk ${x.me?'me':''}"><div class="pos">${i<3?medal[i]:i+1}</div><div><b>${x.n}</b>${x.me?'':'<br><small style="color:var(--muted)">Nome fictício</small>'}</div><div class="pts">${x.p} XP</div></div>`).join('');
+  return `<div class="pagehead"><h2>Conquistas e ranking</h2><p>Pontos, medalhas e ligas por semestre. O ranking é fictício e serve apenas para demonstrar a dinâmica.</p></div>
+  <div class="grid g2">
+    <div class="card"><div class="row" style="gap:18px"><div class="ring" style="--p:${lp}"><span>${L.n}</span></div>
+      <div style="flex:1;min-width:160px"><h3>Nível ${L.n} · ${L.name}</h3><div class="big">${P} <span style="font-size:1rem;color:var(--muted)">XP</span></div>
+      <p style="font-size:.85rem">${L.next?`Faltam ${L.next-P} XP para ${L.nextName}.`:'Nível máximo alcançado!'}</p></div></div>
+      <div class="hint" style="margin-top:14px">Como ganhar XP: aulas (+20), exercícios e Esquenta (+10), missões (+20 por acerto e +35 pela conclusão), desafios (+10 por etapa e +50 ao concluir) e simulador (+50).</div></div>
+    <div class="card"><h3>🎓 Certificado demonstrativo</h3>
+      <p>Conclua <b>80% das missões</b> para receber a indicação de certificado. Ele é demonstrativo e <b>sujeito à validação institucional</b>.</p>
+      <div class="meter"><div class="fill ${elig?'ok':''}" style="width:${pct}%"></div><div class="mk"></div></div>
+      <div class="barlabel"><span>${d} de ${MIS.length} missões (${pct}%)</span><span>Meta: ${misNeed()} missões</span></div>
+      <p style="margin-top:6px;font-size:.88rem">${elig?'✔ Meta atingida! Indicação de certificado gerada, aguardando validação da instituição.':`Faltam ${misNeed()-d} missão(ões) para atingir a meta.`}</p>
+      <button class="btn ${elig?'orange':'line'} sm" style="margin-top:12px" onclick="${elig?'showCert()':'go(\'missions\')'}">${elig?'Ver certificado demonstrativo':'Ir para as missões'}</button></div>
+  </div>
+  <div class="sec"><h3>🏅 Medalhas (${nOk}/${B.length})</h3></div>
+  <div class="grid g4" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">${B.map(b=>`<div class="card badge ${b.ok?'':'locked'}"><div class="em">${b.e}</div><h4>${b.n}</h4><p>${b.d}</p><span class="chip ${b.ok?'g':''}" style="margin-top:8px">${b.ok?'Conquistada':'Bloqueada'}</span></div>`).join('')}</div>
+  <div class="sec"><h3>🏆 Ligas por semestre</h3></div>
+  <div class="tabs">${tabs}</div>
+  <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h3>${LEAGUE_NAMES[leagueSel]}</h3><span class="chip o">Ranking fictício</span></div>
+    ${rows}
+    ${leagueSel!==2?`<p style="font-size:.85rem;margin-top:8px">Você compete na ${LEAGUE_NAMES[2]} (2º semestre).</p>`:''}</div>`;
+};
+function setLeague(k){ leagueSel=k; render(true); }
+function showCert(){
+  const d=misDone(), pct=Math.round(d/MIS.length*100);
+  openModal(`<div class="card cert" style="text-align:center;padding:30px 22px"><span class="chip o">DEMONSTRATIVO</span>
+    <h3 style="margin-top:12px;padding:0">Certificado de Conclusão de Missões</h3>
+    <p style="margin:12px 0">Ana Beatriz concluiu <b>${pct}%</b> das missões sincronizadas de Cálculo, Física e Álgebra (2º semestre).</p>
+    <p style="font-size:.85rem"><b>Sujeito à validação institucional.</b> Documento demonstrativo, sem valor oficial.</p></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" onclick="closeModal()">Fechar</button></div>`);
+}
+
+/* ---------- TELA INICIAL: blocos novos ---------- */
+function homeExtras(){
+  const P=points(), L=level(P), nx=MIS.find(m=>!S.missions[m.id]), ep=phaseProg(0);
+  const lp=L.next?Math.round((P-L.from)/(L.next-L.from)*100):100;
+  return `${todayTeaser()}<div class="sec"><h3>Sua semana</h3><a onclick="go('missions')">Todas as missões →</a></div>
+  <div class="grid g3">
+    <div class="card"><span class="chip o">Missão da semana</span>
+      ${nx?`<h3 style="margin-top:10px">${nx.title}</h3><p>${COURSES[nx.disc].name} · Semana ${nx.sem}</p><button class="btn primary sm" style="margin-top:14px" onclick="go('mission','${nx.id}')">Começar missão</button>`
+          :`<h3 style="margin-top:10px">Todas as missões concluídas! 🎉</h3><p>Confira seu certificado demonstrativo.</p><button class="btn primary sm" style="margin-top:14px" onclick="go('rank')">Ver conquistas</button>`}</div>
+    <div class="card"><span class="chip">Nível ${L.n} · ${L.name}</span>
+      <div class="big" style="margin-top:8px">${P} XP</div><div class="bar o" style="margin:8px 0"><i style="width:${lp}%"></i></div>
+      <p style="font-size:.85rem">${L.next?`Faltam ${L.next-P} XP para ${L.nextName}.`:'Nível máximo!'}</p>
+      <button class="btn ghost sm" style="margin-top:12px" onclick="go('rank')">Medalhas e ranking</button></div>
+    <div class="card"><span class="chip g">Gratuito</span><h3 style="margin-top:10px">Esquenta Engenharia</h3>
+      <div class="bar" style="margin:8px 0"><i style="width:${ep}%"></i></div><p style="font-size:.85rem">Nivelamento de Matemática, Física e lógica (${ep}%).</p>
+      <button class="btn ghost sm" style="margin-top:12px" onclick="go('esq')">Abrir trilhas</button></div>
+  </div>
+  <div class="card" style="margin-top:16px;background:linear-gradient(135deg,#fff7ec,#fff);border-color:#ffd9ad"><div class="row" style="justify-content:space-between">
+    <div style="flex:1;min-width:220px"><h3>🏛 É da coordenação do curso?</h3><p>Conheça o painel institucional com indicadores de engajamento e alertas de atenção acadêmica (dados demonstrativos).</p></div>
+    <button class="btn orange" onclick="go('dash')">Área da Coordenação</button></div></div>`;
+}
+
+/* =========================================================
+   ÁREA DA COORDENAÇÃO (dados exclusivamente fictícios)
+   ========================================================= */
+const COL={alto:'#e0475b',moderado:'#e8a317',baixo:'#17a673'};
+const NIV={alto:['Atenção alta','d'],moderado:['Atenção moderada','c'],baixo:['Atenção baixa','a']};
+const STUD=[
+ {id:1,n:'Rafaela Moura',sem:2,curso:'Eng. Civil',dias:2,mis:7,eng:91,t:'↑',nivel:'baixo',sinais:[],apoio:['Convidar para ser monitora de Cálculo','Reconhecer o desempenho com uma medalha de destaque']},
+ {id:2,n:'Thiago Barros',sem:1,curso:'Eng. Mecânica',dias:16,mis:1,eng:22,t:'↓',nivel:'alto',sinais:['Sem acesso há 16 dias','1 de 8 missões concluídas','Queda de participação nas últimas 3 semanas'],apoio:['Contato acolhedor da coordenação para entender a situação','Convite para o plantão de Cálculo I','Conversa com um mentor da área']},
+ {id:3,n:'Larissa Campos',sem:3,curso:'Eng. Elétrica',dias:9,mis:4,eng:55,t:'→',nivel:'moderado',sinais:['Participação irregular nas últimas semanas','Dificuldade recorrente nas missões de Física'],apoio:['Grupo de estudos de Física','Missão guiada de recuperação','Monitoria semanal']},
+ {id:4,n:'Henrique Matos',sem:1,curso:'Eng. Civil',dias:15,mis:2,eng:30,t:'↓',nivel:'alto',sinais:['Sem acesso há 15 dias','Trilha de nivelamento abandonada','6 missões pendentes'],apoio:['Reforço de Matemática básica','Apresentar o monitor da turma','Contato de acolhimento pelo tutor']},
+ {id:5,n:'Isabela Duarte',sem:2,curso:'Eng. Ambiental',dias:1,mis:6,eng:83,t:'↑',nivel:'baixo',sinais:[],apoio:['Sugerir desafio de captação de água da chuva','Convidar para mentoria entre pares']},
+ {id:6,n:'Gabriel Nunes',sem:4,curso:'Eng. de Produção',dias:5,mis:5,eng:62,t:'→',nivel:'baixo',sinais:['Missões de Álgebra pendentes'],apoio:['Lembrete de prazos','Monitoria de Álgebra Linear']},
+ {id:7,n:'Beatriz Salles',sem:2,curso:'Eng. de Software',dias:11,mis:3,eng:41,t:'↓',nivel:'moderado',sinais:['11 dias sem acesso','Baixo engajamento em missões práticas','5 missões pendentes'],apoio:['Propor desafio ligado a programação','Conversa com mentora da área']},
+ {id:8,n:'Mateus Pires',sem:1,curso:'Eng. Civil',dias:3,mis:5,eng:70,t:'↑',nivel:'baixo',sinais:[],apoio:['Manter o ritmo e sugerir o próximo desafio prático']},
+ {id:9,n:'Camila Teixeira',sem:3,curso:'Eng. Mecânica',dias:21,mis:1,eng:18,t:'↓',nivel:'alto',sinais:['Sem acesso há 21 dias','7 missões pendentes','Nenhuma participação em desafios'],apoio:['Contato individual da coordenação','Conversa sobre rotina, motivação e orientação de carreira','Acompanhamento com mentor']},
+ {id:10,n:'Pedro Lacerda',sem:2,curso:'Eng. Elétrica',dias:6,mis:4,eng:58,t:'→',nivel:'moderado',sinais:['Queda na pontuação semanal'],apoio:['Missão com tema de energia (interesse do curso)','Check-in rápido com o tutor']},
+ {id:11,n:'Júlia Andrade',sem:4,curso:'Eng. Civil',dias:2,mis:8,eng:95,t:'↑',nivel:'baixo',sinais:[],apoio:['Convidar para apresentar sua experiência a calouros']},
+ {id:12,n:'Vinícius Rocha',sem:1,curso:'Eng. de Produção',dias:14,mis:2,eng:35,t:'↓',nivel:'alto',sinais:['Sem acesso há 14 dias','6 missões pendentes','Baixo engajamento desde o início do semestre'],apoio:['Contato acolhedor','Apresentar o Esquenta Engenharia para reforço de base','Roda de conversa com a turma']}
+];
+const accessTxt=d=>d===0?'hoje':d===1?'ontem':`há ${d} dias`;
+
+/* gráficos em SVG/CSS puro (sem bibliotecas) */
+function barChart(vals,labs){
+  const w=320,h=170,pad=26,bw=(w-20)/vals.length,max=Math.max(...vals)*1.1;
+  let s=`<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto" role="img" aria-label="Gráfico de barras">`;
+  vals.forEach((v,i)=>{
+    const bh=(h-pad-24)*v/max, x=10+i*bw+bw*.15, y=h-pad-bh;
+    s+=`<rect x="${x}" y="${y}" width="${bw*.7}" height="${bh}" rx="5" fill="${i===vals.length-1?'#F28C38':'#7655D9'}"/>
+      <text x="${x+bw*.35}" y="${y-5}" font-size="10" text-anchor="middle" fill="#14213d" font-weight="700">${v}%</text>
+      <text x="${x+bw*.35}" y="${h-8}" font-size="10" text-anchor="middle" fill="#5b6b8c">${labs[i]}</text>`;
+  });
+  return s+'</svg>';
+}
+function lineChart(vals,labs){
+  const w=320,h=170,pl=16,pb=24,pt=20,max=Math.max(...vals)*1.15,step=(w-2*pl)/(vals.length-1);
+  const pts=vals.map((v,i)=>[pl+i*step,h-pb-(h-pb-pt)*v/max]);
+  const poly=pts.map(p=>p.join(',')).join(' ');
+  const area=`${pl},${h-pb} ${poly} ${pl+(vals.length-1)*step},${h-pb}`;
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto" role="img" aria-label="Gráfico de linha"><polygon points="${area}" fill="rgba(118,85,217,.12)"/>
+    <polyline points="${poly}" fill="none" stroke="#7655D9" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`+
+    pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#fff" stroke="#F28C38" stroke-width="2.5"/><text x="${p[0]}" y="${p[1]-9}" font-size="10" text-anchor="middle" fill="#14213d" font-weight="700">${vals[i]}</text><text x="${p[0]}" y="${h-7}" font-size="10" text-anchor="middle" fill="#5b6b8c">${labs[i]}</text>`).join('')+'</svg>';
+}
+function donut(parts){
+  const tot=parts.reduce((a,p)=>a+p.v,0); let acc=0;
+  const stops=parts.map(p=>{ const s=acc/tot*100; acc+=p.v; return `${p.c} ${s}% ${acc/tot*100}%`; }).join(',');
+  return `<div class="row" style="gap:20px"><div class="donut" style="background:conic-gradient(${stops})"><span><div>${tot}<small>estudantes</small></div></span></div>
+    <div>${parts.map(p=>`<div style="margin:5px 0;font-size:.9rem"><i class="dot" style="background:${p.c}"></i>${p.l}: <b>${p.v}</b></div>`).join('')}</div></div>`;
+}
+const DEMO_BANNER=`<div class="demo-banner"><b>DADOS DEMONSTRATIVOS.</b> Todos os nomes, números e gráficos desta área são fictícios e servem apenas para apresentação. Os indicadores mostram <b>sinais de possível risco acadêmico</b> e não preveem evasão: a avaliação e a decisão final são sempre da equipe pedagógica.</div>`;
+
+VIEWS.dash=()=>{
+  const kpi=(l,v,s,c)=>`<div class="card kpi"><span>${l}</span><b ${c?`style="color:${c}"`:''}>${v}</b><small>${s}</small></div>`;
+  const weeks=['S1','S2','S3','S4','S5','S6','S7','S8'];
+  const eng=[['Frequência de acesso',72,''],['Conclusão de missões',68,''],['Uso do Esquenta Engenharia',61,''],['Participação em desafios',41,'o'],['Mentorias realizadas',29,'o']]
+    .map(x=>`<div style="margin-bottom:12px"><div class="barlabel"><span>${x[0]}</span><span>${x[1]}%</span></div><div class="bar ${x[2]}"><i style="width:${x[1]}%"></i></div></div>`).join('');
+  const sems=[['1º semestre',58],['2º semestre',66],['3º semestre',70],['4º semestre',74]]
+    .map(x=>`<div style="margin-bottom:12px"><div class="barlabel"><span>${x[0]}</span><span>${x[1]}/100</span></div><div class="bar ${x[1]<60?'o':''}"><i style="width:${x[1]}%"></i></div></div>`).join('');
+  const alerts=[
+    {c:'',t:'31 estudantes sem acesso há 14 dias',d:'Recomenda-se contato acolhedor para entender se há dificuldade de rotina, de conteúdo ou de acesso.',k:'sem14'},
+    {c:'m',t:'Queda de 18% na participação em Cálculo I',d:'Pode indicar dificuldade no conteúdo de derivadas. Avaliar plantão de dúvidas e missão de reforço.',k:'s1'},
+    {c:'m',t:'14 estudantes com 5 ou mais missões pendentes',d:'Acúmulo de pendências costuma indicar perda de ritmo. Sugere-se lembrete e apoio de monitoria.',k:'pend'},
+    {c:'l',t:'4º semestre com alta participação',d:'Turma com bom engajamento: candidata a ações de mentoria entre pares com calouros.',k:'s4'}
+  ].map(a=>`<div class="card alertc ${a.c}"><div class="tx"><h3>${a.t}</h3><p>${a.d}</p></div><button class="btn ghost sm" onclick="gotoFiltro('${a.k}')">Ver estudantes</button></div>`).join('');
+  return `<div class="pagehead"><span class="chip o">Área da Coordenação</span><h2 style="margin-top:8px">Painel de acompanhamento</h2><p>Visão geral do engajamento acadêmico dos estudantes de Engenharia (1º ao 4º semestre).</p></div>
+  ${DEMO_BANNER}
+  <div class="grid g4" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+    ${kpi('Estudantes acompanhados','240','1º ao 4º semestre')}
+    ${kpi('Estudantes ativos','168','70% acessaram nos últimos 7 dias','#17a673')}
+    ${kpi('Sem acesso há 14 dias','31','13% do total · requer contato','#e0475b')}
+    ${kpi('Missões não concluídas','612','de 1.920 previstas (32%)','#b45a00')}
+    ${kpi('Engajamento médio','64/100','índice demonstrativo')}
+  </div>
+  <div class="sec"><h3>📊 Gráficos de participação</h3></div>
+  <div class="grid g2">
+    <div class="card"><h3>Participação semanal</h3><p>% de estudantes ativos nas últimas 8 semanas</p>${barChart([58,62,66,71,69,73,70,70],weeks)}</div>
+    <div class="card"><h3>Missões concluídas por semana</h3><p>Total de missões concluídas pela turma</p>${lineChart([95,128,150,172,160,205,190,208],weeks)}</div>
+    <div class="card"><h3>Distribuição por nível de atenção</h3><p>Sinais observados, sem previsão de evasão</p>${donut([{l:'Atenção baixa',v:165,c:COL.baixo},{l:'Atenção moderada',v:51,c:COL.moderado},{l:'Atenção alta',v:24,c:COL.alto}])}</div>
+    <div class="card"><h3>Engajamento por semestre</h3><p>Índice de 0 a 100</p>${sems}</div>
+  </div>
+  ${gameDash()}<div class="sec"><h3>📈 Indicadores de engajamento</h3></div>
+  <div class="card">${eng}</div>
+  <div class="sec"><h3>🔔 Alertas de atenção acadêmica</h3><a onclick="go('alunos')">Ver todos os estudantes →</a></div>
+  <div class="grid">${alerts}</div>
+  <div class="sec"><h3>Próximos passos</h3></div>
+  <div class="grid g2">
+    <div class="card"><h3>👥 Lista de estudantes</h3><p>Veja indicadores individuais e sugestões de apoio pedagógico.</p><button class="btn primary sm" style="margin-top:12px" onclick="go('alunos')">Abrir lista</button></div>
+    <div class="card"><h3>💼 Modelo de negócio</h3><p>Entenda como a plataforma é oferecida às instituições.</p><button class="btn primary sm" style="margin-top:12px" onclick="go('biz')">Ver modelo</button></div>
+  </div>`;
+};
+function gotoFiltro(k){ fil={k,q:''}; go('alunos'); }
+
+function studFilter(s){
+  const k=fil.k;
+  if((k==='alto'||k==='moderado'||k==='baixo')&&s.nivel!==k) return false;
+  if(k==='sem14'&&s.dias<14) return false;
+  if(k==='pend'&&(8-s.mis)<5) return false;
+  if(/^s[1-4]$/.test(k)&&s.sem!==+k[1]) return false;
+  if(fil.q&&!s.n.toLowerCase().includes(fil.q.toLowerCase())) return false;
+  return true;
+}
+function studCards(){
+  const L=STUD.filter(studFilter);
+  if(!L.length) return `<div class="card"><p>Nenhum estudante encontrado com esse filtro.</p></div>`;
+  return `<div class="grid g3">`+L.map(s=>{
+    const nv=NIV[s.nivel], ini=s.n.split(' ').map(x=>x[0]).slice(0,2).join('');
+    return `<div class="card mentor"><div class="row" style="gap:12px"><div class="av" style="width:48px;height:48px;margin:0;font-size:1rem">${ini}</div><div><h3 style="margin:0">${s.n}</h3><small style="color:var(--muted)">${s.curso} · ${s.sem}º sem. · nome fictício</small></div></div>
+      <div class="row" style="margin:12px 0 6px;gap:6px"><span class="lvl ${nv[1]}">${nv[0]}</span>${S.enc[s.id]?'<span class="chip g">Encaminhado</span>':''}</div>
+      <div class="barlabel" style="margin-top:8px"><span>Engajamento ${s.t}</span><span>${s.eng}/100</span></div><div class="bar ${s.eng>=70?'g':s.eng>=45?'':'r'}"><i style="width:${s.eng}%"></i></div>
+      <p style="margin-top:10px;font-size:.85rem">Último acesso: <b>${accessTxt(s.dias)}</b> · Missões: <b>${s.mis}/8</b></p>
+      <button class="btn ghost" onclick="openStud(${s.id})">Ver acompanhamento</button></div>`;
+  }).join('')+`</div>`;
+}
+VIEWS.alunos=()=>{
+  const T=[['todos','Todos'],['alto','Atenção alta'],['moderado','Atenção moderada'],['baixo','Atenção baixa'],['sem14','Sem acesso 14 dias'],['pend','5+ missões pendentes'],['s1','1º sem.'],['s2','2º sem.'],['s3','3º sem.'],['s4','4º sem.']];
+  return `<div class="pagehead"><span class="chip o">Área da Coordenação</span><h2 style="margin-top:8px">Acompanhamento de estudantes</h2><p>Amostra de 12 estudantes fictícios, com indicadores e sugestões de apoio pedagógico.</p></div>
+  ${DEMO_BANNER}
+  <div class="tabs">${T.map(t=>`<button class="tab ${fil.k===t[0]?'on':''}" onclick="setFil('${t[0]}')">${t[1]}</button>`).join('')}</div>
+  <input class="search" id="fsearch" placeholder="Buscar estudante pelo nome…" value="${fil.q}" oninput="searchStud(this.value)">
+  <div id="slist">${studCards()}</div>`;
+};
+function setFil(k){ fil.k=k; render(true); }
+function searchStud(v){ fil.q=v; $('#slist').innerHTML=studCards(); }
+function openStud(id){
+  const s=STUD.find(x=>x.id===id), nv=NIV[s.nivel], enc=S.enc[id];
+  openModal(`<span class="chip o">Dados demonstrativos</span>
+    <h3 style="margin-top:8px">${s.n}</h3><p style="color:var(--muted)">${s.curso} · ${s.sem}º semestre</p>
+    <div class="row" style="margin:12px 0"><span class="lvl ${nv[1]}">${nv[0]}</span><span class="chip">Tendência ${s.t}</span></div>
+    <div class="grid g4" style="grid-template-columns:repeat(3,1fr);margin:10px 0">
+      <div class="stat"><b>${s.eng}</b><span>engajamento</span></div><div class="stat"><b>${s.mis}/8</b><span>missões</span></div><div class="stat"><b>${s.dias}d</b><span>sem acesso</span></div></div>
+    <h4 style="margin:14px 0 8px">Sinais observados</h4>
+    ${s.sinais.length?`<ul style="margin-left:20px;color:#34456a">${s.sinais.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<p>Nenhum sinal de atenção no momento.</p>'}
+    <h4 style="margin:14px 0 8px">Sugestões de apoio pedagógico</h4>
+    <ul style="margin-left:20px;color:#34456a">${s.apoio.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <div class="callout" style="margin-top:14px">Estes indicadores sinalizam <b>possível risco acadêmico</b> e não preveem evasão. Use-os como ponto de partida para uma conversa, nunca como veredito.</div>
+    <div class="row" style="margin-top:14px"><button class="btn ${enc?'line':'primary'}" onclick="toggleEnc(${id})">${enc?'✔ Encaminhamento registrado':'Registrar encaminhamento (demo)'}</button><button class="btn line" onclick="closeModal()">Fechar</button></div>`);
+}
+function toggleEnc(id){
+  S.enc[id]=!S.enc[id]; save(); openStud(id);
+  toast(S.enc[id]?'Encaminhamento registrado (demonstrativo).':'Encaminhamento removido.');
+  if(cur.v==='alunos') render(true);
+}
+
+/* ---------- MODELO DE NEGÓCIO ---------- */
+const fmtR=v=>'R$ '+v.toLocaleString('pt-BR');
+VIEWS.biz=()=>{
+  const n=500;
+  return `<div class="pagehead"><span class="chip o">Institucional</span><h2 style="margin-top:8px">Modelo de negócio</h2><p>Como o Engagement chega às instituições e gera valor para estudantes, universidades e empresas.</p></div>
+  <div class="hero"><div class="eyebrow">B2B · Educação</div><h2>Universidades contratam. Estudantes aprendem. Empresas se conectam.</h2>
+    <p>Uma plataforma de nivelamento, missões práticas e acompanhamento do engajamento, do preparo para a faculdade até o 4º semestre.</p></div>
+  <div class="sec"><h3>Quem é quem</h3></div>
+  <div class="grid g3">
+    <div class="card"><div style="font-size:1.8rem">🏛</div><h3>Modelo B2B</h3><p>A venda é feita para instituições, e não diretamente ao estudante. A universidade contrata a plataforma para toda a sua base de Engenharia.</p></div>
+    <div class="card"><div style="font-size:1.8rem">🎓</div><h3>Universidades como clientes</h3><p>Recebem o painel da Coordenação, alertas de atenção acadêmica e relatórios de engajamento para agir cedo e apoiar quem precisa.</p></div>
+    <div class="card"><div style="font-size:1.8rem">🧑‍💻</div><h3>Estudantes como usuários</h3><p>Acessam o Esquenta Engenharia, a jornada, as missões e as conquistas sem custo direto. O Esquenta é gratuito para o Ensino Médio.</p></div>
+  </div>
+  <div class="sec"><h3>💳 Licença por estudante</h3></div>
+  <div class="card"><div class="row" style="justify-content:space-between"><div><div class="big">R$ 15 <span style="font-size:1rem;color:var(--muted)">/ estudante / mês</span></div><p>Valor estimado para fins de apresentação.</p></div>
+    <div class="row"><button class="btn line sm" onclick="setBiz(300)">Curso pequeno · 300</button><button class="btn line sm" onclick="setBiz(1500)">Faculdade média · 1.500</button><button class="btn line sm" onclick="setBiz(4000)">Grande · 4.000</button></div></div>
+    <div style="margin-top:16px"><div class="barlabel"><span>Estudantes licenciados</span><span id="bnv">${n.toLocaleString('pt-BR')}</span></div>
+    <input type="range" id="bn" min="100" max="5000" step="50" value="${n}" oninput="calcBiz()"></div>
+    <div class="grid g2" style="margin-top:14px"><div class="card stat"><b id="bm">${fmtR(n*15)}</b><span>por mês</span></div><div class="card stat"><b id="ba">${fmtR(n*15*12)}</b><span>por ano</span></div></div>
+    <p style="font-size:.8rem;margin-top:10px">Estimativa ilustrativa: não representa proposta comercial, contrato nem projeção de resultado.</p></div>
+  <div class="sec"><h3>🔄 Fluxo de valor</h3></div>
+  <div class="card"><div class="flow">
+    <div class="node"><b>Universidade</b>Contrata a licença e acompanha a turma</div><div class="arrow">licença →<br>← painel e alertas</div>
+    <div class="node"><b>Engagement</b>Nivelamento, missões, gamificação e indicadores</div><div class="arrow">conteúdo e missões →<br>← engajamento</div>
+    <div class="node"><b>Estudantes</b>Aprendem na prática e constroem portfólio</div></div>
+    <div class="flow" style="margin-top:14px;grid-template-columns:1fr"><div class="node" style="border-color:#ffd9ad"><b>Empresas de Engenharia</b>Patrocinam desafios e premiações · conhecem talentos · oferecem mentores</div></div></div>
+  <div class="sec"><h3>🤝 Parcerias e patrocínios</h3></div>
+  <div class="grid g3">
+    <div class="card"><h3>Parcerias com empresas</h3><p>Empresas de Engenharia conectam a sala de aula ao mercado: oferecem mentores, casos reais e visitas técnicas.</p></div>
+    <div class="card"><h3>Patrocínio de desafios</h3><p>Uma empresa propõe um problema real (como o de uma ponte sustentável) e acompanha as soluções dos estudantes.</p></div>
+    <div class="card"><h3>Premiações</h3><p>Bolsas, estágios, visitas e certificados para os melhores desempenhos. Valores a definir com cada parceiro.</p></div>
+  </div>
+  <div class="sec"><h3>O que a instituição ganha</h3></div>
+  <div class="card"><ul style="margin-left:20px;color:#34456a"><li>Visão do engajamento desde a chegada do calouro, com alertas de atenção acadêmica.</li><li>Ferramenta de apoio pedagógico para conversar com estudantes em risco de se afastar.</li><li>Nivelamento antes do 1º semestre e missões ligadas às disciplinas.</li><li>Aproximação com empresas parceiras e com o mercado.</li></ul>
+    <p style="font-size:.85rem;margin-top:10px">Os benefícios acima são hipóteses do projeto e precisam ser validados em um piloto com uma instituição real.</p>
+    <div class="row" style="margin-top:12px"><button class="btn primary" onclick="go('dash')">Ver painel da Coordenação</button><button class="btn line" onclick="go('home')">Ver ambiente do estudante</button></div></div>`;
+};
+function calcBiz(){
+  const n=+$('#bn').value;
+  $('#bnv').textContent=n.toLocaleString('pt-BR'); $('#bm').textContent=fmtR(n*15); $('#ba').textContent=fmtR(n*15*12);
+}
+function setBiz(n){ $('#bn').value=n; calcBiz(); }
+
+
+/* =========================================================
+   v3 — GAMIFICAÇÃO: XP, níveis, sequência, mapa, missões
+   diárias, ligas, conquistas (tudo em localStorage)
+   ========================================================= */
+const TIERS={s:['Simples',10],i:['Intermediária',20],a:['Avançada',35],e:['Especial',50]};
+const SIMXP=50;
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parseK=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d);};
+function today(){const d=new Date();d.setDate(d.getDate()+(S.off||0));return keyOf(d);}
+function addDays(k,n){const d=parseK(k);d.setDate(d.getDate()+n);return keyOf(d);}
+function weekKey(k){const d=parseK(k);d.setDate(d.getDate()-((d.getDay()+6)%7));return keyOf(d);}
+function dayIdx(){const [y,m,d]=today().split('-').map(Number);return Math.floor(Date.UTC(y,m-1,d)/864e5);}
+const DIAS=['D','S','T','Q','Q','S','S'];
+
+/* --- sequência --- */
+function streakNow(){const t=today(),l=S.st.last;return (l===t||l===addDays(t,-1))?S.st.cur:0;}
+function bumpStreak(){const t=today(),st=S.st;if(st.last===t)return false;st.cur=(st.last===addDays(t,-1))?st.cur+1:1;st.best=Math.max(st.best,st.cur);st.last=t;st.days[t]=1;return true;}
+
+/* --- ligas --- */
+const LG=[{n:'Bronze',e:'🥉'},{n:'Prata',e:'🥈'},{n:'Ouro',e:'🥇'},{n:'Diamante',e:'💎'}];
+const LGDATA=[
+ [['Lucas Ferreira',160],['Camila Rocha',140],['Davi Monteiro',125],['Sofia Lacerda',95],['Enzo Barbosa',70],['Marcela Dias',50],['Pietro Alves',30],['Nina Prado',15]],
+ [['Rafaela Moura',260],['Isabela Duarte',235],['Pedro Lacerda',200],['Beatriz Salles',170],['Gustavo Pinto',140],['Letícia Mendes',100],['Heitor Nunes',60]],
+ [['Larissa Campos',380],['Matheus Oliveira',345],['Nicole Santana',310],['Caio Ribeiro',260],['Yasmin Freitas',210],['Otávio Lima',150],['Lara Teles',90]],
+ [['Júlia Andrade',520],['Fernando Costa',480],['Helena Barros',440],['Rodrigo Maia',390],['Carolina Vieira',330],['André Moreira',270]]];
+let lgSel=null;
+function leagueRows(li,me){const r=LGDATA[li].map(x=>({n:x[0],p:x[1],me:false}));if(me)r.push({n:'Ana Beatriz (você)',p:S.wk.xp,me:true});r.sort((a,b)=>b.p-a.p||(a.me?1:-1));return r;}
+function ensureWeek(){const k=weekKey(today());if(S.wk.k!==k){if(S.wk.k)settleWeek(true);S.wk={k,xp:0};save();}}
+function settleWeek(auto){
+  const pos=leagueRows(S.lg,true).findIndex(x=>x.me)+1, up=pos<=3&&S.lg<3&&S.wk.xp>0, from=S.lg;
+  if(up)S.lg++;
+  S.lastWeek={pos,up,from,to:S.lg,xp:S.wk.xp}; S.wk.xp=0; lgSel=null; save();
+  if(!auto){render();const w=S.lastWeek;openModal(`<div style="text-align:center"><div style="font-size:3rem">${w.up?'🎉':'📅'}</div><h3 style="padding:0">Semana encerrada</h3><p style="margin:10px 0;color:var(--muted)">Você terminou em <b>${w.pos}º lugar</b> na Liga ${LG[w.from].n} com ${w.xp} XP.${w.up?` <b>Promovido(a) para a Liga ${LG[w.to].n}!</b>`:w.from===3?' Você está na liga máxima.':' Fique no top 3 com mais XP para subir de liga.'}</p><button class="btn orange" onclick="closeModal()">Continuar</button></div>`);if(w.up)confetti();}
+}
+function ensureDay(){const t=today();if(S.daily.d!==t){S.daily={d:t,ans:{},done:{},bonus:false};save();}}
+
+/* --- efeitos visuais --- */
+function confetti(){const cols=['#7655D9','#F28C38','#142B45','#ffffff','#a28af0','#ffb066'],b=document.createElement('div');b.className='confetti';
+  for(let i=0;i<40;i++){const p=document.createElement('i');p.style.cssText=`left:${Math.random()*100}%;background:${cols[i%6]};animation-delay:${Math.random()*.3}s;animation-duration:${1.1+Math.random()*.9}s`;b.appendChild(p);}
+  document.body.appendChild(b);setTimeout(()=>b.remove(),2400);}
+function fx(xp,label){const c=document.createElement('div');c.className='xpfly';c.innerHTML=`+${xp} XP<small>${label||''}</small>`;document.body.appendChild(c);setTimeout(()=>c.remove(),1700);confetti();}
+function pop(html){const n=document.querySelectorAll('.achpop').length,e=document.createElement('div');e.className='achpop';e.style.top=(14+n*74)+'px';e.innerHTML=html;document.body.appendChild(e);setTimeout(()=>e.remove(),3300);}
+function levelUp(n){const L=LEVELS[n-1];openModal(`<div style="text-align:center;padding:8px 0"><div style="font-size:3.4rem">🚀</div><h3 style="padding:0">Você subiu de nível!</h3><div class="big" style="margin:8px 0">Nível ${n} · ${L[1]}</div><p style="color:var(--muted)">Continue completando missões para evoluir ainda mais.</p><button class="btn orange" style="margin-top:14px" onclick="closeModal()">Continuar</button></div>`);confetti();}
+
+/* --- motor de XP --- */
+function gain(key,xp,label,o){
+  o=o||{}; if(S.xpd[key])return null;
+  ensureWeek(); const before=level(S.xp).n;
+  S.xpd[key]=1; S.xp+=xp; S.wk.xp+=xp;
+  const first=bumpStreak();
+  if(o.mission){S.cnt++;if(o.prac)S.prac++;}
+  const na=checkAch(); save();
+  const after=level(S.xp).n, lu=after>before;
+  fx(xp,label);
+  if(first)setTimeout(()=>pop(`🔥 <b>Sequência de ${S.st.cur} dia${S.st.cur>1?'s':''}!</b><br>Missão do dia feita. Volte amanhã!`),700);
+  na.forEach((a,i)=>setTimeout(()=>pop(`${a.e} <b>Conquista desbloqueada</b><br>${a.n}`),1500+i*1300));
+  if(lu&&!o.noModal)setTimeout(()=>levelUp(after),900);
+  render(true);
+  return {xp,lu,after,first};
+}
+points=function(){return S.xp;};
+
+/* --- conquistas --- */
+function ACH(){
+  const mat=(trailDone('mat')||esqStats('mat').a===ESQ.mat.q.length)?1:0;
+  const A=[
+   ['p1','👣','Primeiro Passo','Conclua sua primeira missão',S.cnt,1],
+   ['foco','🎯','Foco Total','Estude 3 dias consecutivos',S.st.best,3],
+   ['mat','➗','Matemático','Conclua uma trilha de Matemática',mat,1],
+   ['mao','🛠️','Mão na Massa','Complete 5 desafios práticos',S.prac,5],
+   ['pers','🔥','Persistência','Alcance 7 dias de sequência',S.st.best,7],
+   ['eng','🎓','Engenheiro em Formação','Conclua 10 missões',S.cnt,10]];
+  return A.map(a=>({id:a[0],e:a[1],n:a[2],d:a[3],v:Math.min(a[4],a[5]),t:a[5],ok:a[4]>=a[5]}));
+}
+function checkAch(){const n=[];ACH().forEach(a=>{if(a.ok&&!S.ach[a.id]){S.ach[a.id]=today();n.push(a);}});return n;}
+
+/* --- trilhas do mapa de aprendizagem --- */
+const mq=(id,i)=>{const q=MIS.find(m=>m.id===id).q;return i===undefined?q:(q[i]||q[0]);};
+const INTRO=[
+ {q:'Qual é a primeira etapa do ciclo de um projeto de engenharia?',o:['Construção','Identificar e definir o problema','Manutenção','Compra de materiais'],c:1,e:'Todo projeto começa entendendo o problema e as necessidades de quem será atendido. Só depois se planejam as soluções.'},
+ {q:'O que caracteriza uma boa solução de engenharia?',o:['Ser a mais cara','Equilibrar segurança, custo, prazo e impacto ambiental','Usar a tecnologia mais nova','Ser rápida de desenhar'],c:1,e:'Engenharia é equilibrar restrições: a melhor solução atende a todas elas de forma viável.'},
+ {q:'Por que engenheiros trabalham em equipes multidisciplinares?',o:['Para dividir a responsabilidade','Porque problemas reais envolvem várias áreas do conhecimento','Por exigência de sindicatos','Para reduzir reuniões'],c:1,e:'Uma obra envolve estrutura, custos, comunicação, segurança e meio ambiente. Ninguém domina tudo sozinho.'},
+ {q:'Uma reserva técnica de 10% no orçamento serve para…',o:['Aumentar o lucro','Absorver imprevistos sem parar a obra','Pagar impostos','Substituir o planejamento'],c:1,e:'A reserva técnica protege o projeto de imprevistos, como variação de preço de materiais ou retrabalho.'}];
+const TRAILS=[
+ {id:'mat',n:'Matemática básica',e:'➗',d:'A base de toda conta de engenharia.',req:null,st:[
+  ['Frações e porcentagem','Orçamentos, aumentos e proporções de obra.',ESQ.mat.q.slice(0,2)],
+  ['Equações e funções','Isolar incógnitas e interpretar funções.',ESQ.mat.q.slice(2)],
+  ['Padrões e proporção','Sequências e regra de três no canteiro.',ESQ.log.q.slice(0,2)],
+  ['Desafio especial: lógica','Raciocínio com máquinas e tanques.',ESQ.log.q.slice(2)]]},
+ {id:'calc',n:'Cálculo I',e:'📈',d:'A linguagem matemática da variação.',req:['mat',2],st:[
+  ['Derivadas na prática','Velocidade e aceleração de um elevador.',mq('m1')],
+  ['Otimização','Menos material para o mesmo volume.',mq('m2')],
+  ['Integrais','Volume de água captado.',mq('m7')],
+  ['Desafio especial: Cálculo','Revisão das três etapas.',[mq('m1',0),mq('m2',0),mq('m7',0)]]]},
+ {id:'fis',n:'Física I',e:'⚙️',d:'Forças, energia e movimento nas estruturas.',req:['mat',1],st:[
+  ['Tração em cabos','Equilíbrio de forças em um guindaste.',mq('m3')],
+  ['Energia','Queda de uma ferramenta no canteiro.',mq('m4')],
+  ['Cinemática','Distância de frenagem de um caminhão.',mq('m8')],
+  ['Desafio especial: Física','Revisão das três etapas.',[mq('m3',0),mq('m4',0),mq('m8',0)]]]},
+ {id:'alg',n:'Álgebra Linear',e:'🧮',d:'Sistemas e matrizes aplicados a estruturas.',req:['calc',1],st:[
+  ['Sistemas lineares','Forças em uma treliça.',mq('m5')],
+  ['Matrizes','Orçamento de materiais.',mq('m6')],
+  ['Desafio especial: Álgebra','Revisão das duas etapas.',[mq('m5',1),mq('m6',1)]]]},
+ {id:'intro',n:'Introdução à Engenharia',e:'🏗️',d:'O papel do engenheiro e o ciclo de projeto.',req:null,st:[
+  ['O que faz um engenheiro','Problemas, soluções e restrições.',INTRO.slice(0,2)],
+  ['Equipes e orçamento','Trabalho colaborativo e reserva técnica.',INTRO.slice(2)],
+  ['Desafio especial: visão geral','Revisão da trilha.',[INTRO[1],INTRO[3]]]]}];
+const stDone=(t,i)=>!!(S.map[t]&&S.map[t][i]);
+const trailCount=t=>S.map[t]?Object.keys(S.map[t]).length:0;
+const trailDone=id=>{const T=TRAILS.find(x=>x.id===id);return T.st.every((_,i)=>stDone(id,i));};
+function stStatus(T,i){if(stDone(T.id,i))return 'done';if(i===0)return (T.req&&trailCount(T.req[0])<T.req[1])?'lock':'open';return stDone(T.id,i-1)?'open':'lock';}
+const stTier=(T,i)=>i===T.st.length-1?'e':['s','i','a'][Math.min(i,2)];
+
+VIEWS.map=()=>{
+  const tot=TRAILS.reduce((a,T)=>a+T.st.length,0),dn=TRAILS.reduce((a,T)=>a+trailCount(T.id),0),pct=Math.round(dn/tot*100);
+  const secs=TRAILS.map(T=>{
+    const c=trailCount(T.id),pr=Math.round(c/T.st.length*100),rq=T.req&&trailCount(T.req[0])<T.req[1]?TRAILS.find(x=>x.id===T.req[0]).n:null;
+    const nodes=T.st.map((s,i)=>{const st=stStatus(T,i),tr=stTier(T,i),lab={done:'Concluída',open:'Disponível',lock:'Bloqueada'}[st];
+      return `<div class="pn ${st}" onclick="openStage('${T.id}',${i})"><div class="orb">${st==='done'?'✓':st==='lock'?'🔒':tr==='e'?'🏆':'▶'}</div><div class="pi"><b>${s[0]}</b><small>${s[1]}</small><div class="row" style="gap:6px;margin-top:6px"><span class="chip ${tr==='e'?'o':''}">${TIERS[tr][0]}</span><span class="chip o">+${TIERS[tr][1]} XP</span><span class="chip ${st==='done'?'g':''}">${lab}</span></div></div></div>`;}).join('');
+    return `<div class="card trail"><div class="th"><div class="em">${T.e}</div><div style="flex:1;min-width:180px"><h3>${T.n}</h3><p>${T.d}</p></div><span class="chip ${pr===100?'g':''}">${c}/${T.st.length} etapas</span></div>
+      <div class="bar ${pr===100?'g':''}" style="margin-bottom:12px"><i style="width:${pr}%"></i></div>
+      ${rq?`<div class="hint" style="margin:0 0 10px">🔒 Trilha liberada ao concluir ${T.req[1]} etapa(s) de <b>${rq}</b>.</div>`:''}<div class="path">${nodes}</div></div>`;}).join('');
+  return `<div class="pagehead"><h2>Mapa de Aprendizagem</h2><p>Avance etapa por etapa. Cada etapa concluída libera a próxima e rende XP.</p></div>
+  <div class="card"><div class="row" style="gap:22px"><div class="ring" style="--p:${pct}"><span>${pct}%</span></div><div style="flex:1;min-width:200px"><h3>${dn} de ${tot} etapas concluídas</h3><p>Simples +10 XP · Intermediária +20 XP · Avançada +35 XP · Especial +50 XP. Acerte pelo menos metade das questões para concluir.</p></div></div></div>
+  <div class="grid g2" style="margin-top:16px">${secs}</div>`;
+};
+function openStage(t,i){
+  const T=TRAILS.find(x=>x.id===t),st=stStatus(T,i);
+  if(st==='lock'){const m=(i===0&&T.req)?`Conclua pelo menos <b>${T.req[1]} etapa(s)</b> da trilha <b>${TRAILS.find(x=>x.id===T.req[0]).n}</b> para liberar.`:'Conclua a <b>etapa anterior</b> desta trilha para liberar.';
+    openModal(`<h3>🔒 Etapa bloqueada</h3><p style="color:var(--muted);margin:10px 0 14px">${m}</p><button class="btn primary" onclick="closeModal()">Entendi</button>`);return;}
+  showStage(t,i,false);
+}
+function showStage(t,i,keep){const sc=keep?$('#modal').scrollTop:0;openModal(stageHTML(t,i));$('#modal').scrollTop=sc;}
+function stageHTML(t,i){
+  const T=TRAILS.find(x=>x.id===t),s=T.st[i],tr=stTier(T,i),xp=TIERS[tr][1],done=stDone(t,i);let ans=0,ok=0;
+  const qs=s[2].map((q,k)=>{const a=S.ms[t+'-'+i+'-'+k];if(a!==undefined){ans++;if(a===q.c)ok++;}
+    const op=q.o.map((o,j)=>{let c='opt';if(a!==undefined){if(j===q.c)c+=' right';else if(j===a)c+=' wrong';}return `<button class="${c}" ${a!==undefined?'disabled':''} onclick="ansStage('${t}',${i},${k},${j})">${String.fromCharCode(65+j)}) ${o}</button>`;}).join('');
+    return `<div class="q"><p>${k+1}. ${q.q}</p>${op}${a!==undefined?`<div class="fb">${a===q.c?'✔ Correto! ':'✘ Quase lá. '}${q.e}</div>`:''}</div>`;}).join('');
+  const n=s[2].length,need=Math.ceil(n/2),all=ans===n;let act;
+  if(done)act=`<div class="hint" style="background:#e9f9f2;border-color:var(--ok);color:#0f7a54">✔ Etapa concluída. Revise as explicações quando quiser.</div><div class="row" style="margin-top:12px"><button class="btn line" onclick="retryStage('${t}',${i})">↻ Praticar de novo</button><button class="btn primary" onclick="closeModal()">Fechar</button></div>`;
+  else if(!all)act=`<p style="font-size:.85rem;color:var(--muted)">Responda as ${n} questões (${ans}/${n}). Acerte pelo menos ${need} para concluir.</p>`;
+  else if(ok>=need)act=`<button class="btn orange" onclick="completeStage('${t}',${i})">Concluir etapa · +${xp} XP</button>`;
+  else act=`<div class="hint">Você acertou ${ok} de ${n}. Releia as explicações e tente de novo.</div><button class="btn primary" style="margin-top:10px" onclick="retryStage('${t}',${i})">↻ Tentar novamente</button>`;
+  return `<span class="chip o">${TIERS[tr][0]} · +${xp} XP</span><h3 style="margin-top:8px">${T.e} ${s[0]}</h3><p style="color:var(--muted);margin:6px 0 14px">${s[1]}</p>${qs}<div style="margin-top:6px">${act}</div>`;
+}
+function ansStage(t,i,k,j){const key=t+'-'+i+'-'+k;if(S.ms[key]!==undefined)return;S.ms[key]=j;save();showStage(t,i,true);}
+function retryStage(t,i){const T=TRAILS.find(x=>x.id===t);T.st[i][2].forEach((_,k)=>delete S.ms[t+'-'+i+'-'+k]);save();showStage(t,i,false);}
+function completeStage(t,i){
+  if(stDone(t,i))return;
+  const T=TRAILS.find(x=>x.id===t),s=T.st[i],tr=stTier(T,i),xp=TIERS[tr][1];
+  let ok=0;s[2].forEach((q,k)=>{if(S.ms[t+'-'+i+'-'+k]===q.c)ok++;});
+  S.map[t]=S.map[t]||{};S.map[t][i]=1;
+  const g=gain('stage:'+t+i,xp,'Etapa concluída',{mission:1,noModal:1}), fin=trailDone(t), nx=i+1<T.st.length;
+  openModal(`<div style="text-align:center"><div style="font-size:3.2rem">${fin?'🏆':'🎉'}</div><h3 style="padding:0">${fin?'Trilha concluída!':'Etapa concluída!'}</h3>
+    <div class="big" style="margin:8px 0;color:var(--orange)">+${xp} XP</div>
+    <p style="color:var(--muted)">Você acertou ${ok} de ${s[2].length} em “${s[0]}”. ${ok===s[2].length?'Desempenho perfeito!':'Releia as explicações para fixar o que faltou.'}</p>
+    ${g&&g.lu?`<div class="hint" style="margin-top:12px;background:#f4f1fd;border-color:#7655D9;color:#4a3a8a">🚀 Você subiu para o <b>Nível ${g.after} · ${LEVELS[g.after-1][1]}</b>!</div>`:''}
+    <div class="row" style="justify-content:center;margin-top:16px">${nx?`<button class="btn orange" onclick="openStage('${t}',${i+1})">Próxima etapa</button>`:''}<button class="btn ${nx?'line':'orange'}" onclick="closeModal()">Voltar ao mapa</button></div></div>`);
+}
+
+/* --- missões de hoje --- */
+const SKQ=[
+ {q:'Em uma reunião, um colega do financeiro está calado. Qual atitude mostra escuta ativa?',o:['Seguir a pauta sem interromper','Convidá-lo a opinar e resumir o que entendeu','Pedir que seja mais objetivo','Decidir sem ele'],c:1,e:'Escuta ativa é convidar o outro a falar e confirmar o entendimento, resumindo o que ouviu antes de decidir.',ctx:'Competência: escuta ativa.'},
+ {q:'O cliente quer um prazo menor e a equipe diz que é impossível. Qual a melhor abordagem de negociação?',o:['Impor o prazo do cliente','Apresentar alternativas de prazo e custo para decidirem juntos','Concordar e ajustar depois','Ignorar o pedido'],c:1,e:'Negociar é buscar uma solução em que ambos ganham, com transparência sobre prazo, custo e riscos.',ctx:'Competência: negociação.'},
+ {q:'Em um trabalho em grupo, um integrante entregou sua parte atrasada. O que fazer primeiro?',o:['Refazer a parte sozinho','Conversar para entender o motivo e redistribuir tarefas','Reclamar com o professor','Excluí-lo do grupo'],c:1,e:'Colaborar começa por entender o contexto. A conversa franca costuma resolver mais que a punição.',ctx:'Competência: colaboração.'}
+].concat(ESQ.log.q.map(q=>Object.assign({ctx:'Raciocínio lógico: pense com método.'},q)));
+function dailySet(){
+  const di=dayIdx(),flat=[];MIS.forEach(m=>m.q.forEach(q=>flat.push({q,m})));
+  const a=flat[di%flat.length];let b=flat[(di*5+3)%flat.length];if(b===a)b=flat[(di*5+4)%flat.length];
+  const c=SKQ[di%SKQ.length];
+  return [
+   {k:'t',tipo:'Conhecimento teórico',e:'📘',tr:'s',q:a.q,ctx:`<b>Conteúdo (${COURSES[a.m.disc].name}):</b> ${a.m.cont[0]}`},
+   {k:'p',tipo:'Aplicação prática',e:'🏗️',tr:'a',q:b.q,ctx:`<b>Situação:</b> ${b.m.ctx}`},
+   {k:'c',tipo:'Raciocínio e competências',e:'🧠',tr:'i',q:c,ctx:c.ctx}];
+}
+function ansDaily(k,j){
+  ensureDay();if(S.daily.done[k])return;
+  const m=dailySet().find(x=>x.k===k);S.daily.ans[k]=j;
+  if(j===m.q.c){S.daily.done[k]=1;save();const t=S.daily.d;
+    gain(`daily:${t}:${k}`,TIERS[m.tr][1],'Missão do dia',{mission:1,prac:k==='p'});
+    if(Object.keys(S.daily.done).length===3&&!S.daily.bonus){S.daily.bonus=true;save();setTimeout(()=>gain(`dailyb:${t}`,50,'Desafio especial do dia'),900);}
+  }else{save();render(true);}
+}
+function retryDaily(k){delete S.daily.ans[k];save();render(true);}
+function nextDay(){S.off=(S.off||0)+1;save();render();toast('Simulando o próximo dia: novas missões e sequência atualizada.');}
+function todayTeaser(){ensureDay();const d=Object.keys(S.daily.done).length;
+  return `<div class="card" style="margin-top:16px;border:2px solid #7655D9;background:linear-gradient(135deg,#fff,#f4f1fd)"><div class="row" style="justify-content:space-between"><div style="flex:1;min-width:220px"><span class="chip o">🔥 ${streakNow()} dia(s) de sequência</span><h3 style="margin-top:8px">Missões de Hoje · ${d}/3</h3><div class="bar o" style="margin:8px 0"><i style="width:${d/3*100}%"></i></div><p>${d===3?'Tudo feito hoje! Volte amanhã para manter a sequência.':'Complete as missões de hoje e ganhe até 115 XP.'}</p></div><button class="btn orange" onclick="go('today')">${d===3?'Rever missões':'Jogar agora'}</button></div></div>`;}
+VIEWS.today=()=>{
+  ensureDay();const set=dailySet(),D=S.daily,nd=Object.keys(D.done).length,t=today(),act=S.st.last===t;
+  const dots=[6,5,4,3,2,1,0].map(i=>{const k=addDays(t,-i),d=parseK(k);return `<div class="sd ${S.st.days[k]?'on':''}" title="${k}">${S.st.days[k]?'🔥':DIAS[d.getDay()]}</div>`;}).join('');
+  const cards=set.map(m=>{const a=D.ans[m.k],dn=D.done[m.k],xp=TIERS[m.tr][1];
+    const op=m.q.o.map((o,j)=>{let c='opt';if(a!==undefined){if(j===m.q.c)c+=' right';else if(j===a)c+=' wrong';}return `<button class="${c}" ${a!==undefined?'disabled':''} onclick="ansDaily('${m.k}',${j})">${String.fromCharCode(65+j)}) ${o}</button>`;}).join('');
+    const fb=a===undefined?'':`<div class="fb">${dn?`✔ Correto! +${xp} XP. `:'✘ Ainda não. '}${m.q.e}</div>${dn?'':`<button class="btn primary sm" style="margin-top:10px" onclick="retryDaily('${m.k}')">↻ Tentar de novo</button>`}`;
+    return `<div class="card dm"><div class="tipo"><span class="chip">${m.e} ${m.tipo}</span><span class="chip o">${TIERS[m.tr][0]} · +${xp} XP</span>${dn?'<span class="chip g">✔ Concluída</span>':''}</div><p style="margin-bottom:10px">${m.ctx}</p><div class="q" style="margin:0"><p style="color:var(--text)"><b>${m.q.q}</b></p>${op}${fb}</div></div>`;}).join('');
+  return `<div class="pagehead"><h2>Missões de Hoje</h2><p>Três atividades por dia: teoria, prática e competências. Conclua para ganhar XP e manter a sequência.</p></div>
+  <div class="grid g2"><div class="card"><div class="row" style="gap:18px"><div class="ring" style="--p:${Math.round(nd/3*100)}"><span>${nd}/3</span></div><div style="flex:1;min-width:150px"><h3>${nd===3?'Dia completo! 🎉':'Progresso do dia'}</h3><p>${nd===3?'Você ganhou o bônus especial de +50 XP.':'Complete as 3 para ganhar +50 XP de bônus especial.'}</p></div></div></div>
+  <div class="card"><div class="row" style="justify-content:space-between"><div><h3>🔥 ${streakNow()} dia(s) seguidos</h3><p>Melhor sequência: <b>${S.st.best}</b> dia(s)</p></div></div><div class="sdots" style="margin:12px 0">${dots}</div>
+   <p style="font-size:.88rem">${act?'🔥 Ótimo! Hoje a sua sequência está garantida. Volte amanhã para somar mais um dia.':'Conclua uma missão hoje para manter a sua sequência.'}</p></div></div>
+  <div class="sec"><h3>Suas missões</h3></div><div class="grid g3">${cards}</div>
+  <div class="card" style="margin-top:16px"><div class="row" style="justify-content:space-between"><p style="flex:1;min-width:200px;font-size:.88rem"><b>Modo demonstração:</b> avance o calendário para ver novas missões e a sequência crescendo. A sequência só aumenta uma vez por dia, usando a data local.</p><button class="btn line sm" onclick="nextDay()">⏭ Simular próximo dia</button></div></div>`;
+};
+
+/* --- ligas --- */
+VIEWS.league=()=>{
+  ensureWeek();const sel=lgSel===null?S.lg:lgSel,mine=sel===S.lg,rows=leagueRows(sel,mine),pos=rows.findIndex(x=>x.me)+1;
+  const tabs=LG.map((l,i)=>`<button class="lgb ${i===S.lg?'cur':''} ${i===sel?'sel':''}" onclick="lgSel=${i};render(true)"><span class="em">${l.e}</span>${l.n}${i===S.lg?'<br><small>sua liga</small>':''}</button>`).join('');
+  const med=['🥇','🥈','🥉'];
+  const list=rows.map((x,i)=>`${i===3&&sel<3?'<div class="zline">▲ ZONA DE PROMOÇÃO ACIMA (top 3)</div>':''}<div class="rk ${x.me?'me':''} ${i<3&&sel<3?'zone':''}"><div class="pos">${i<3?med[i]:i+1}</div><div><b>${x.n}</b>${x.me?'':'<br><small style="color:var(--muted)">Estudante fictício</small>'}</div><div class="pts">${x.p} XP</div></div>`).join('');
+  let info='';
+  if(mine){const top=rows.filter(x=>!x.me),third=top[2]?top[2].p:0,ahead=pos>1?rows[pos-2].p:null;
+    info=`<div class="card" style="margin-bottom:14px"><div class="row" style="gap:20px"><div class="stat"><b>${pos}º</b><span>sua posição</span></div><div class="stat"><b>${S.wk.xp}</b><span>XP na semana</span></div><div style="flex:1;min-width:200px"><p>${S.lg===3?'Você está na liga máxima. Mantenha-se no topo!':pos<=3&&S.wk.xp>0?'✔ Você está na zona de promoção! Mantenha a posição até o fim da semana.':`Faltam <b>${Math.max(0,third+1-S.wk.xp)} XP</b> para entrar no top 3 e subir para a Liga ${LG[S.lg+1].n}.`}${ahead!==null&&pos>1?` Para passar ${rows[pos-2].n}: <b>${ahead+1-S.wk.xp} XP</b>.`:''}</p></div></div></div>`;}
+  const lw=S.lastWeek?`<div class="hint" style="margin-bottom:14px">📅 Semana anterior: ${S.lastWeek.pos}º lugar na Liga ${LG[S.lastWeek.from].n}${S.lastWeek.up?` · promovido(a) para ${LG[S.lastWeek.to].n}!`:'.'}</div>`:'';
+  return `<div class="pagehead"><h2>Ligas e Ranking</h2><p>Competição acadêmica semanal. O ranking usa apenas o <b>XP ganho nesta semana</b>, não o XP total. Os top 3 sobem de liga.</p></div>
+  <div class="lgs">${tabs}</div>${lw}${info}
+  <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:12px"><h3>${LG[sel].e} Liga ${LG[sel].n}</h3><span class="chip o">Ranking fictício</span></div>${list}
+   ${mine?'':`<p style="font-size:.85rem;margin-top:8px">Você compete na Liga ${LG[S.lg].n}. Toque nela para ver sua posição.</p>`}</div>
+  <div class="card" style="margin-top:16px"><div class="row" style="justify-content:space-between"><p style="flex:1;min-width:200px;font-size:.88rem"><b>Modo demonstração:</b> a semana encerra automaticamente na virada de segunda-feira. Use o botão para ver a promoção agora.</p><button class="btn line sm" onclick="settleWeek(false)">📅 Encerrar semana (demo)</button></div></div>`;
+};
+
+/* --- conquistas --- */
+const _rankOld=VIEWS.rank;
+VIEWS.rank=()=>{
+  const P=S.xp,L=level(P),lp=L.next?Math.round((P-L.from)/(L.next-L.from)*100):100,A=ACH(),n=A.filter(a=>a.ok).length;
+  const cards=A.map(a=>`<div class="card ach ${a.ok?'':'lk'}"><div class="md">${a.ok?a.e:'🔒'}</div><h4>${a.n}</h4><p>${a.d}</p>${a.ok?`<span class="chip g">Desbloqueada · ${parseK(S.ach[a.id]||today()).toLocaleDateString('pt-BR')}</span>`:`<div class="bar o"><i style="width:${a.v/a.t*100}%"></i></div><small style="color:var(--muted)">${a.v}/${a.t}</small>`}</div>`).join('');
+  const lv=LEVELS.map((l,i)=>`<span class="chip ${P>=l[0]?'g':''}">${i+1}. ${l[1]} · ${l[0]} XP</span>`).join('');
+  return `<div class="pagehead"><h2>Conquistas e Evolução</h2><p>Seu XP, nível, sequência e medalhas.</p></div>
+  <div class="grid g2"><div class="card"><div class="row" style="gap:18px"><div class="ring" style="--p:${lp}"><span>${L.n}</span></div><div style="flex:1;min-width:170px"><h3>Nível ${L.n} · ${L.name}</h3><div class="big">${P} <span style="font-size:1rem;color:var(--muted)">XP</span></div><p style="font-size:.85rem">${L.next?`Faltam ${L.next-P} XP para ${L.nextName}.`:'Nível máximo alcançado!'}</p></div></div><div class="row" style="gap:6px;margin-top:14px">${lv}</div></div>
+  <div class="card"><h3>🔥 Sequência de estudos</h3><div class="row" style="gap:26px;margin:10px 0"><div class="stat"><b>${streakNow()}</b><span>dias seguidos</span></div><div class="stat"><b>${S.st.best}</b><span>melhor sequência</span></div><div class="stat"><b>${S.cnt}</b><span>missões concluídas</span></div></div>
+   <div class="hint">Como ganhar XP: Simples +10 · Intermediária +20 · Avançada +35 · Desafio especial +50.</div></div></div>
+  <div class="sec"><h3>🏅 Conquistas (${n}/${A.length})</h3></div><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">${cards}</div>
+  <div class="card" style="margin-top:16px"><h3>🧪 Ferramentas da demonstração</h3><p>Os dados ficam salvos neste navegador (localStorage), sem cadastro nem banco de dados.</p><div class="row" style="margin-top:12px"><button class="btn line sm" onclick="nextDay()">⏭ Simular próximo dia</button><button class="btn line sm" onclick="settleWeek(false)">📅 Encerrar semana</button><button class="btn orange sm" onclick="resetDemo()">↺ Reiniciar dados demonstrativos</button></div></div>
+  <details class="ph" style="margin-top:16px"><summary><div class="num">🏆</div><div style="flex:1"><h3 style="font-size:1.05rem">Medalhas da jornada, certificado e ranking por semestre</h3></div></summary><div class="body">${_rankOld()}</div></details>`;
+};
+
+/* --- painel institucional: novos indicadores gamificados --- */
+function gameDash(){
+  const T=[['1º semestre',212,48,3.4,81],['2º semestre',286,57,4.1,74],['3º semestre',341,64,4.6,70],['4º semestre',395,71,5.2,66]];
+  const avgXp=Math.round(T.reduce((a,x)=>a+x[1],0)/4),avgM=Math.round(T.reduce((a,x)=>a+x[2],0)/4),avgF=(T.reduce((a,x)=>a+x[3],0)/4).toFixed(1);
+  const drop=STUD.filter(s=>s.t==='↓');
+  const kpi=(l,v,s)=>`<div class="card kpi"><span>${l}</span><b>${v}</b><small>${s}</small></div>`;
+  const cmp=(lab,i,max,suf)=>T.map(x=>`<div class="gcmp"><span>${x[0]}</span><div class="bar ${x[i]<(max*.55)?'o':''}"><i style="width:${Math.min(100,x[i]/max*100)}%"></i></div><b>${x[i]}${suf}</b></div>`).join('');
+  return `<div class="sec"><h3>🎮 Gamificação e engajamento por turma</h3><span class="chip o">Dados demonstrativos</span></div>
+  <div class="grid g4" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">${kpi('Média de XP das turmas',avgXp+' XP','média dos 4 semestres')}${kpi('Missões concluídas',avgM+'%','das missões previstas')}${kpi('Frequência de uso',avgF+'×','acessos por semana por estudante')}${kpi('Queda de engajamento',drop.length,'estudantes em queda nesta semana')}</div>
+  <div class="grid g2" style="margin-top:16px"><div class="card"><h3>Comparação entre turmas · XP médio</h3><p style="margin-bottom:12px">XP acumulado por estudante</p>${cmp('xp',1,400,' XP')}</div>
+  <div class="card"><h3>Comparação entre turmas · % de missões</h3><p style="margin-bottom:12px">Missões concluídas sobre as previstas</p>${cmp('m',2,100,'%')}</div>
+  <div class="card"><h3>Frequência de utilização</h3><p style="margin-bottom:12px">Acessos por semana por estudante</p>${cmp('f',3,6,'×')}</div>
+  <div class="card"><h3>📉 Estudantes com queda de engajamento</h3><p style="margin-bottom:10px">Sinais de atenção, sem previsão de evasão.</p>${drop.map(s=>`<div class="rk"><div class="pos">↓</div><div><b>${s.n}</b><br><small style="color:var(--muted)">${s.sem}º sem · ${s.dias} dias sem acesso</small></div><button class="btn ghost sm" style="margin-left:auto" onclick="openStud(${s.id})">Ver</button></div>`).join('')||'<p>Nenhum estudante em queda.</p>'}</div></div>`;
+}
+
+/* --- ganchos de XP nas atividades existentes --- */
+const _answer=answer;answer=function(id,i,j){const f=S.quiz[id+'-'+i]===undefined;_answer(id,i,j);if(f&&j===COURSES[id].lesson.ex[i].c)gain('lq:'+id+i,10,'Acerto');};
+const _fl=finishLesson;finishLesson=function(id){const f=!S.lessons[id];_fl(id);if(f)gain('les:'+id,20,'Aula concluída',{mission:1});};
+const _ae=ansEsq;ansEsq=function(id,i,j){const f=S.esq[id+'-'+i]===undefined;_ae(id,i,j);if(f&&j===ESQ[id].q[i].c)gain('esq:'+id+i,10,'Acerto');const s=esqStats(id);if(s.a===s.n)gain('esqd:'+id,20,'Trilha concluída',{mission:1});};
+const _am=ansMis;ansMis=function(id,i,j){const f=S.mq[id+'-'+i]===undefined;_am(id,i,j);if(f&&j===MIS.find(m=>m.id===id).q[i].c)gain('mq:'+id+i,20,'Acerto');};
+const _fm=finishMis;finishMis=function(id){const f=!S.missions[id];_fm(id);if(f)gain('mis:'+id,35,'Missão concluída',{mission:1,prac:1});};
+const _ts=toggleStep;toggleStep=function(id,i){_ts(id,i);const a=S.ch[id];if(a&&a[i])gain('chs:'+id+i,10,'Etapa do desafio');if(a&&a.every(Boolean)){gain('chd:'+id,50,'Desafio concluído',{mission:1,prac:1});setTimeout(()=>pop('🏆 <b>Desafio concluído!</b><br>Seu projeto foi para o portfólio.'),600);}};
+const _ca=confirmAlt;confirmAlt=function(k){_ca(k);gain('sim',SIMXP,'Missão especial',{mission:1,prac:1});};
+const _render=render;render=function(k){ensureDay();ensureWeek();_render(k);};
+function hudHTML(){const P=S.xp,L=level(P),lp=L.next?Math.round((P-L.from)/(L.next-L.from)*100):100;
+  return `<div class="hud" onclick="go('rank')" title="Ver conquistas"><div class="hchip fire">🔥 ${streakNow()}</div><div class="hxp"><div class="hl"><b>Nível ${L.n} · ${L.name}</b><span>${P} XP${L.next?' · faltam '+(L.next-P):''}</span></div><div class="hbar"><i style="width:${lp}%"></i></div></div><div class="hchip" onclick="event.stopPropagation();go('league')">${LG[S.lg].e} ${LG[S.lg].n}</div></div>`;}
+checkAch();ensureWeek();ensureDay();save();
+
+/* ---------- Início ---------- */
+buildNav();
+render();
+</script>
+</body>
+</html>
